@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-glow: 0 0 20px rgba(0, 217, 255, 0.5);
+  --secondary-glow: 0 0 20px rgba(0, 200, 83, 0.5);
+  --neon-border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+  text-align: right;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode default */
+body {
+  background-color: #0A0A0F;
+  color: #FFFFFF;
+}
+
+body.light-mode {
+  background-color: #F5F5F7;
+  color: #1A1A2E;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1A1A25;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00D9FF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00B8D9;
+}
+
+/* Neon text effect */
+.neon-text {
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8),
+               0 0 20px rgba(0, 217, 255, 0.6),
+               0 0 30px rgba(0, 217, 255, 0.4);
+}
+
+.neon-text-green {
+  text-shadow: 0 0 10px rgba(0, 200, 83, 0.8),
+               0 0 20px rgba(0, 200, 83, 0.6),
+               0 0 30px rgba(0, 200, 83, 0.4);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light-mode .glass {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover glow */
+.btn-glow:hover {
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.5),
+              0 0 40px rgba(0, 217, 255, 0.3);
+}
+
+/* Score number styling */
+.score-number {
+  font-family: 'Orbitron', monospace;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Animation classes */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Confetti container */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Timer urgent state */
+.timer-urgent {
+  animation: pulse 0.5s ease-in-out infinite;
+  color: #FF6B6B;
+}
+
+/* Card flip animation */
+.card-flip {
+  perspective: 1000px;
+}
+
+.card-flip-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-flip.flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  backface-visibility: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
