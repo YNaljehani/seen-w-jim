@@ -5,9 +5,12 @@ import { useThemeStore } from '../stores/themeStore'
 import { useAudioStore } from '../stores/audioStore'
 
 export default function Home() {
-  const { setGameState, generateRoomCode, joinRoomCode, setJoinRoomCode, joinGame } = useGameStore()
-  const { isDark, toggleTheme } = useThemeStore()
-  const { sfxEnabled, toggleSfx } = useAudioStore()
+  const setGameState = useGameStore((state) => state.setGameState)
+  const generateRoomCode = useGameStore((state) => state.generateRoomCode)
+  const isDark = useThemeStore((state) => state.isDark)
+  const toggleTheme = useThemeStore((state) => state.toggleTheme)
+  const sfxEnabled = useAudioStore((state) => state.sfxEnabled)
+  const toggleSfx = useAudioStore((state) => state.toggleSfx)
 
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [joinCode, setJoinCode] = useState('')
@@ -23,9 +26,7 @@ export default function Home() {
 
   const handleSubmitJoin = () => {
     if (joinCode.trim().length >= 4) {
-      setJoinRoomCode(joinCode.toUpperCase())
-      // For now, go to team setup as a second device would
-      // In future, this would connect to an existing game
+      generateRoomCode()
       setGameState('team_setup')
       setShowJoinModal(false)
     }
@@ -41,7 +42,7 @@ export default function Home() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-12"
+        className="text-center mb-12 relative z-10"
       >
         <h1 className="text-6xl md:text-8xl font-display font-extrabold mb-4">
           <span className="neon-text text-primary-500">سين</span>
@@ -58,25 +59,21 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex flex-col gap-4 w-full max-w-md"
+        className="flex flex-col gap-4 w-full max-w-md relative z-10"
       >
         {/* Create Game Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={handleCreateGame}
-          className="btn-glow w-full py-5 px-8 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg"
+          className="btn-glow w-full py-5 px-8 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
         >
           <span className="text-2xl">🎮</span>
           إنشاء لعبة
-        </motion.button>
+        </button>
 
         {/* Join Game Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={handleJoinGame}
-          className={`w-full py-5 px-8 rounded-xl font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg ${
+          className={`w-full py-5 px-8 rounded-xl font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98] ${
             isDark
               ? 'bg-dark-elevated border border-gray-700 text-white hover:bg-dark-card'
               : 'bg-white border border-gray-200 text-gray-800 hover:bg-gray-50'
@@ -84,13 +81,11 @@ export default function Home() {
         >
           <span className="text-2xl">🚪</span>
           انضم للعبة
-        </motion.button>
+        </button>
 
         {/* Spectator Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`w-full py-5 px-8 rounded-xl font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg ${
+        <button
+          className={`w-full py-5 px-8 rounded-xl font-bold text-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98] ${
             isDark
               ? 'bg-dark-elevated border border-gray-700 text-white hover:bg-dark-card'
               : 'bg-white border border-gray-200 text-gray-800 hover:bg-gray-50'
@@ -98,7 +93,7 @@ export default function Home() {
         >
           <span className="text-2xl">👁️</span>
           متفرج
-        </motion.button>
+        </button>
       </motion.div>
 
       {/* Settings Row */}
@@ -106,7 +101,7 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="fixed bottom-8 flex items-center gap-4"
+        className="fixed bottom-8 flex items-center gap-4 z-10"
       >
         {/* Theme Toggle */}
         <button
@@ -134,9 +129,9 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.5 }}
         transition={{ duration: 0.8, delay: 0.6 }}
-        className="fixed bottom-2 text-sm text-gray-500"
+        className="fixed bottom-2 text-sm text-gray-500 z-10"
       >
-        v1.1.0
+        v1.2.0
       </motion.p>
 
       {/* Join Game Modal */}
