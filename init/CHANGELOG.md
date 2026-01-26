@@ -156,7 +156,17 @@ seen-w-jim/
 
 #### Repository
 - **GitHub:** https://github.com/YNaljehani/seen-w-jim
+- **Live Demo:** https://seen-w-jim.vercel.app/
 - **Created:** 2026-01-27
+
+---
+
+## [1.0.1] - 2026-01-27
+
+### Deployment
+- Deployed to Vercel
+- Live at: https://seen-w-jim.vercel.app/
+- Auto-deploy enabled from GitHub master branch
 
 ---
 
