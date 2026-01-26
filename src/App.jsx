@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useGameStore } from './stores/gameStore'
 import { useThemeStore } from './stores/themeStore'
 import Home from './components/Home'
 import TeamSetup from './components/game/TeamSetup'
 import CategorySelection from './components/game/CategorySelection'
+import QuestionBoard from './components/game/QuestionBoard'
 import GameBoard from './components/game/GameBoard'
 import ResultsScreen from './components/game/ResultsScreen'
 
 function App() {
-  const { gameState } = useGameStore()
+  const { gameState, selectQuestion } = useGameStore()
   const { isDark } = useThemeStore()
 
   useEffect(() => {
@@ -19,6 +20,10 @@ function App() {
     }
   }, [isDark])
 
+  const handleSelectQuestion = (categoryId, question) => {
+    selectQuestion(categoryId, question)
+  }
+
   const renderScreen = () => {
     switch (gameState) {
       case 'home':
@@ -28,11 +33,9 @@ function App() {
       case 'category_selection_A':
       case 'category_selection_B':
         return <CategorySelection />
+      case 'question_board':
+        return <QuestionBoard onSelectQuestion={handleSelectQuestion} />
       case 'playing':
-      case 'question_display':
-      case 'team_a_answering':
-      case 'team_b_stealing':
-      case 'reveal_answer':
         return <GameBoard />
       case 'game_over':
         return <ResultsScreen />

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { defaultCategories, getQuestionsForCategories } from '../data/defaultQuestions'
+import { defaultCategories } from '../data/defaultQuestions'
 
 const initialPowerUps = {
   pit: { used: false, activeForQuestion: null },
@@ -29,8 +29,8 @@ export const useGameStore = create((set, get) => ({
   // Categories & Questions
   availableCategories: defaultCategories,
   selectedCategories: [],
-  questions: [],
-  currentQuestionIndex: 0,
+  currentQuestion: null,
+  answeredQuestions: [],
 
   // Timer
   timerSeconds: 60,
@@ -41,6 +41,9 @@ export const useGameStore = create((set, get) => ({
   activePowerUp: null,
   showCallOverlay: false,
   callTimerSeconds: 60,
+
+  // Join Game
+  joinRoomCode: '',
 
   // Settings
   settings: {
@@ -56,6 +59,14 @@ export const useGameStore = create((set, get) => ({
     const code = Math.random().toString(36).substring(2, 8).toUpperCase()
     set({ roomCode: code })
     return code
+  },
+
+  setJoinRoomCode: (code) => set({ joinRoomCode: code }),
+
+  joinGame: (code) => {
+    // For now, just set the code and go to spectator mode
+    // In future, this would connect to a real game session
+    set({ roomCode: code, gameState: 'spectator' })
   },
 
   setTeamName: (team, name) => {
@@ -99,20 +110,17 @@ export const useGameStore = create((set, get) => ({
       })
 
       if (newSelectedCategories.length === 3) {
-        // Both teams selected, start the game
+        // Both teams selected, show the question board
         get().startGame()
       }
     }
   },
 
   startGame: () => {
-    const { selectedCategories, availableCategories } = get()
-    const questions = getQuestionsForCategories(selectedCategories, availableCategories)
-
     set({
-      gameState: 'playing',
-      questions,
-      currentQuestionIndex: 0,
+      gameState: 'question_board',
+      currentQuestion: null,
+      answeredQuestions: [],
       currentTeam: 'A',
       isStealMode: false,
       timerSeconds: get().settings.timerA,
@@ -120,9 +128,27 @@ export const useGameStore = create((set, get) => ({
     })
   },
 
-  getCurrentQuestion: () => {
-    const { questions, currentQuestionIndex } = get()
-    return questions[currentQuestionIndex] || null
+  // Select a specific question from the board
+  selectQuestion: (categoryId, question) => {
+    const { availableCategories } = get()
+    const category = availableCategories.find(c => c.id === categoryId)
+
+    if (!category || !question) return
+
+    const fullQuestion = {
+      ...question,
+      categoryId,
+      categoryName: category.name,
+      categoryIcon: category.icon
+    }
+
+    set({
+      currentQuestion: fullQuestion,
+      gameState: 'playing',
+      timerSeconds: get().settings.timerA,
+      isTimerRunning: false,
+      isStealMode: false
+    })
   },
 
   startTimer: () => set({ isTimerRunning: true }),
@@ -137,7 +163,6 @@ export const useGameStore = create((set, get) => ({
     if (timerSeconds > 0) {
       set({ timerSeconds: timerSeconds - 1 })
     } else {
-      // Time's up
       get().handleTimeout()
     }
   },
@@ -146,7 +171,6 @@ export const useGameStore = create((set, get) => ({
     const { isStealMode, settings } = get()
 
     if (!isStealMode) {
-      // Main team timed out, give steal chance
       set({
         isStealMode: true,
         currentTeam: get().currentTeam === 'A' ? 'B' : 'A',
@@ -154,25 +178,21 @@ export const useGameStore = create((set, get) => ({
         isTimerRunning: true
       })
     } else {
-      // Steal team also timed out, move to next question
-      get().nextQuestion()
+      get().finishQuestion(false)
     }
   },
 
   markAnswer: (isCorrect) => {
-    const { currentTeam, isStealMode, teamA, teamB, questions, currentQuestionIndex } = get()
-    const currentQuestion = questions[currentQuestionIndex]
+    const { currentTeam, isStealMode, teamA, teamB, currentQuestion } = get()
 
     if (!currentQuestion) return
 
-    // Check if pit is active
     const activeTeam = currentTeam === 'A' ? teamA : teamB
     const opponentTeam = currentTeam === 'A' ? teamB : teamA
-    const isPitActive = activeTeam.powerUps.pit.activeForQuestion === currentQuestionIndex
+    const isPitActive = activeTeam.powerUps.pit.activeForQuestion === currentQuestion.id
 
     if (isCorrect) {
       if (isPitActive) {
-        // Pit power-up: subtract from opponent
         const newOpponentScore = Math.max(0, opponentTeam.score - currentQuestion.points)
         if (currentTeam === 'A') {
           set({ teamB: { ...teamB, score: newOpponentScore } })
@@ -180,7 +200,6 @@ export const useGameStore = create((set, get) => ({
           set({ teamA: { ...teamA, score: newOpponentScore } })
         }
       } else {
-        // Normal scoring
         const newScore = (currentTeam === 'A' ? teamA : teamB).score + currentQuestion.points
         if (currentTeam === 'A') {
           set({ teamA: { ...teamA, score: newScore } })
@@ -188,12 +207,10 @@ export const useGameStore = create((set, get) => ({
           set({ teamB: { ...teamB, score: newScore } })
         }
       }
-      get().nextQuestion()
+      get().finishQuestion(true)
     } else {
-      // Wrong answer
       const doubleAnswer = activeTeam.powerUps.doubleAnswer
       if (doubleAnswer.attemptsRemaining > 0) {
-        // Still have attempts from double answer
         if (currentTeam === 'A') {
           set({
             teamA: {
@@ -215,11 +232,10 @@ export const useGameStore = create((set, get) => ({
             }
           })
         }
-        return // Stay on same question
+        return
       }
 
       if (!isStealMode) {
-        // Switch to steal mode
         set({
           isStealMode: true,
           currentTeam: currentTeam === 'A' ? 'B' : 'A',
@@ -227,42 +243,51 @@ export const useGameStore = create((set, get) => ({
           isTimerRunning: true
         })
       } else {
-        // Both teams failed, next question
-        get().nextQuestion()
+        get().finishQuestion(false)
       }
     }
   },
 
-  nextQuestion: () => {
-    const { currentQuestionIndex, questions, settings, teamA, teamB } = get()
-    const nextIndex = currentQuestionIndex + 1
+  finishQuestion: (wasCorrect) => {
+    const { currentQuestion, answeredQuestions, selectedCategories, teamA, teamB, currentTeam } = get()
 
-    // Clear pit power-up active state
+    if (!currentQuestion) return
+
+    // Add to answered questions
+    const newAnsweredQuestions = [
+      ...answeredQuestions,
+      { categoryId: currentQuestion.categoryId, points: currentQuestion.points, id: currentQuestion.id }
+    ]
+
+    // Clear pit power-up
     set({
       teamA: { ...teamA, powerUps: { ...teamA.powerUps, pit: { ...teamA.powerUps.pit, activeForQuestion: null } } },
-      teamB: { ...teamB, powerUps: { ...teamB.powerUps, pit: { ...teamB.powerUps.pit, activeForQuestion: null } } }
+      teamB: { ...teamB, powerUps: { ...teamB.powerUps, pit: { ...teamB.powerUps.pit, activeForQuestion: null } } },
+      answeredQuestions: newAnsweredQuestions,
+      isTimerRunning: false,
+      activePowerUp: null
     })
 
-    if (nextIndex >= questions.length) {
-      // Game over
-      set({ gameState: 'game_over', isTimerRunning: false })
+    // Check if all questions are answered (6 categories × 4 point values = 24 questions)
+    const totalQuestions = selectedCategories.length * 4
+    if (newAnsweredQuestions.length >= totalQuestions) {
+      set({ gameState: 'game_over', currentQuestion: null })
     } else {
-      // Alternate teams for next question (based on question index)
-      const nextTeam = nextIndex % 2 === 0 ? 'A' : 'B'
+      // Alternate teams - the team that answered (or failed) picks next
+      // If correct, same team picks; if wrong/timeout, other team picks
+      const nextTeam = wasCorrect ? currentTeam : (currentTeam === 'A' ? 'B' : 'A')
       set({
-        currentQuestionIndex: nextIndex,
+        gameState: 'question_board',
+        currentQuestion: null,
         currentTeam: nextTeam,
-        isStealMode: false,
-        timerSeconds: settings.timerA,
-        isTimerRunning: false,
-        activePowerUp: null
+        isStealMode: false
       })
     }
   },
 
   // Power-up actions
   usePowerUp: (powerUp) => {
-    const { currentTeam, teamA, teamB, currentQuestionIndex } = get()
+    const { currentTeam, teamA, teamB, currentQuestion } = get()
     const team = currentTeam === 'A' ? teamA : teamB
 
     if (team.powerUps[powerUp].used) return false
@@ -271,7 +296,7 @@ export const useGameStore = create((set, get) => ({
 
     switch (powerUp) {
       case 'pit':
-        updatedPowerUps.pit = { used: true, activeForQuestion: currentQuestionIndex }
+        updatedPowerUps.pit = { used: true, activeForQuestion: currentQuestion?.id }
         break
       case 'callFriend':
         updatedPowerUps.callFriend = { used: true }
@@ -323,8 +348,8 @@ export const useGameStore = create((set, get) => ({
       currentTeam: 'A',
       isStealMode: false,
       selectedCategories: [],
-      questions: [],
-      currentQuestionIndex: 0,
+      currentQuestion: null,
+      answeredQuestions: [],
       timerSeconds: 60,
       isTimerRunning: false,
       timerPaused: false,
@@ -342,8 +367,8 @@ export const useGameStore = create((set, get) => ({
       currentTeam: 'A',
       isStealMode: false,
       selectedCategories: [],
-      questions: [],
-      currentQuestionIndex: 0,
+      currentQuestion: null,
+      answeredQuestions: [],
       timerSeconds: 60,
       isTimerRunning: false,
       timerPaused: false,

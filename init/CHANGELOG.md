@@ -170,6 +170,45 @@ seen-w-jim/
 
 ---
 
+## [1.2.0] - 2026-01-27
+
+### Added - Jeopardy-Style Question Board
+- **New QuestionBoard component**: Players now choose category AND point level
+- Dashboard displays after each question for next selection
+- Visual grid showing all categories (columns) and point values (rows)
+- Answered questions are marked and disabled
+- Current team indicator shows whose turn to pick
+
+### Added - Join Game Feature
+- Join Game button now functional
+- Modal popup for entering room code
+- Input validation for room codes
+
+### Changed - Game Flow
+- Players select questions from board instead of auto-progression
+- Team that answers correctly picks next question
+- Team that fails loses turn to opponent
+- Game ends when all 24 questions answered (6 categories × 4 points)
+
+### Added - More Categories & Questions
+- Expanded to 16 categories with 4 questions each (64 total)
+- New categories:
+  - 🦁 حيوانات (Animals)
+  - 📖 لغة عربية (Arabic Language)
+  - 🚀 فضاء (Space)
+  - 🇦🇪 إماراتي (UAE)
+- Enriched existing questions with better content
+- Each category has exactly: 100, 200, 300, 500 point questions
+
+### Technical Changes
+- Refactored gameStore for board-based selection
+- Added `answeredQuestions` tracking
+- Added `selectQuestion` action
+- Added `finishQuestion` for proper flow control
+- Updated App.jsx routing for new states
+
+---
+
 ## Future Updates
 
 _All changes will be logged here with dates_

@@ -14,31 +14,36 @@ export default function GameBoard() {
     currentTeam,
     teamA,
     teamB,
-    questions,
-    currentQuestionIndex,
+    currentQuestion,
     isStealMode,
     isTimerRunning,
     startTimer,
     stopTimer,
     markAnswer,
-    nextQuestion,
-    activePowerUp
+    finishQuestion,
+    activePowerUp,
+    answeredQuestions,
+    selectedCategories
   } = useGameStore()
   const { isDark } = useThemeStore()
 
   const [showAnswer, setShowAnswer] = useState(false)
   const [questionReady, setQuestionReady] = useState(false)
 
-  const currentQuestion = questions[currentQuestionIndex]
   const team = currentTeam === 'A' ? teamA : teamB
   const teamColor = currentTeam === 'A' ? 'teamA' : 'teamB'
+
+  // Calculate progress
+  const totalQuestions = selectedCategories.length * 4
+  const answeredCount = answeredQuestions?.length || 0
+  const progress = (answeredCount / totalQuestions) * 100
 
   // Reset state when question changes
   useEffect(() => {
     setShowAnswer(false)
     setQuestionReady(false)
     stopTimer()
-  }, [currentQuestionIndex, stopTimer])
+  }, [currentQuestion?.id, stopTimer])
 
   const handleStartQuestion = () => {
     setQuestionReady(true)
@@ -58,8 +63,17 @@ export default function GameBoard() {
     markAnswer(false)
   }
 
-  // Progress indicator
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100
+  const handleSkip = () => {
+    finishQuestion(false)
+  }
+
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>لا يوجد سؤال محدد</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col p-4">
@@ -92,7 +106,7 @@ export default function GameBoard() {
         className="text-center mb-4"
       >
         <span className={`px-4 py-2 rounded-full ${isDark ? 'bg-dark-card' : 'bg-white shadow'}`}>
-          السؤال <span className="font-bold text-primary-500">{currentQuestionIndex + 1}</span> من <span className="font-bold">{questions.length}</span>
+          السؤال <span className="font-bold text-primary-500">{answeredCount + 1}</span> من <span className="font-bold">{totalQuestions}</span>
         </span>
       </motion.div>
 
@@ -154,16 +168,16 @@ export default function GameBoard() {
                 className="text-center"
               >
                 <div className={`p-8 rounded-2xl mb-6 ${isDark ? 'bg-dark-card' : 'bg-white shadow-xl'}`}>
-                  <span className="text-6xl mb-4 block">{currentQuestion?.categoryIcon}</span>
-                  <h3 className="text-2xl font-bold mb-2">{currentQuestion?.categoryName}</h3>
+                  <span className="text-6xl mb-4 block">{currentQuestion.categoryIcon}</span>
+                  <h3 className="text-2xl font-bold mb-2">{currentQuestion.categoryName}</h3>
                   <p className="text-4xl font-bold text-primary-500 mb-2">
-                    {currentQuestion?.points} نقطة
+                    {currentQuestion.points} نقطة
                   </p>
                   <p className="text-gray-400">
-                    {currentQuestion?.difficulty === 'easy' && 'سهل'}
-                    {currentQuestion?.difficulty === 'medium' && 'متوسط'}
-                    {currentQuestion?.difficulty === 'hard' && 'صعب'}
-                    {currentQuestion?.difficulty === 'expert' && 'خبير'}
+                    {currentQuestion.difficulty === 'easy' && 'سهل'}
+                    {currentQuestion.difficulty === 'medium' && 'متوسط'}
+                    {currentQuestion.difficulty === 'hard' && 'صعب'}
+                    {currentQuestion.difficulty === 'expert' && 'خبير'}
                   </p>
                 </div>
                 <Button
@@ -206,7 +220,7 @@ export default function GameBoard() {
                   variant="teamA"
                   className="w-full"
                   onClick={() => {
-                    if (currentTeam === 'A' || (currentTeam === 'B' && isStealMode)) {
+                    if (currentTeam === 'A' || isStealMode) {
                       handleMarkCorrect()
                     }
                   }}
@@ -218,7 +232,7 @@ export default function GameBoard() {
                   variant="teamB"
                   className="w-full"
                   onClick={() => {
-                    if (currentTeam === 'B' || (currentTeam === 'A' && isStealMode)) {
+                    if (currentTeam === 'B' || isStealMode) {
                       handleMarkCorrect()
                     }
                   }}
@@ -236,7 +250,7 @@ export default function GameBoard() {
                 <Button
                   variant="ghost"
                   className="w-full border border-gray-700"
-                  onClick={nextQuestion}
+                  onClick={handleSkip}
                 >
                   ⏭️ تخطي
                 </Button>
