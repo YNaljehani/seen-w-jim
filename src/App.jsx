@@ -10,20 +10,13 @@ import ResultsScreen from './components/game/ResultsScreen'
 
 function App() {
   const { gameState, selectQuestion, loadCategories, isLoading } = useGameStore()
-  const { isDark } = useThemeStore()
+  const { isDark, initTheme } = useThemeStore()
 
-  // Load categories from Supabase on mount (falls back to default if unavailable)
+  // Initialize theme and load categories on mount
   useEffect(() => {
+    initTheme()
     loadCategories()
-  }, [loadCategories])
-
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.remove('light-mode')
-    } else {
-      document.body.classList.add('light-mode')
-    }
-  }, [isDark])
+  }, [initTheme, loadCategories])
 
   const handleSelectQuestion = (categoryId, question) => {
     selectQuestion(categoryId, question)
@@ -50,7 +43,7 @@ function App() {
   }
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-dark-bg' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen transition-colors duration-500 ${isDark ? 'bg-dark-bg' : 'bg-gray-100'}`}>
       {renderScreen()}
     </div>
   )

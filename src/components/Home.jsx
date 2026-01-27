@@ -137,36 +137,80 @@ export default function Home() {
         className="fixed bottom-8 flex items-center gap-4 z-10"
       >
         {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 15 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+            playClick()
+            mediumTap()
+            toggleTheme()
+          }}
           className={`p-3 rounded-full transition-all duration-300 ${
             isDark ? 'bg-dark-elevated hover:bg-dark-card' : 'bg-white hover:bg-gray-100 shadow-md'
           }`}
         >
-          {isDark ? '☀️' : '🌙'}
-        </button>
+          <motion.span
+            key={isDark ? 'sun' : 'moon'}
+            initial={{ rotate: -90, scale: 0 }}
+            animate={{ rotate: 0, scale: 1 }}
+            exit={{ rotate: 90, scale: 0 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            {isDark ? '☀️' : '🌙'}
+          </motion.span>
+        </motion.button>
 
         {/* Sound Toggle */}
-        <button
-          onClick={toggleSfx}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+            mediumTap()
+            toggleSfx()
+          }}
           className={`p-3 rounded-full transition-all duration-300 ${
             isDark ? 'bg-dark-elevated hover:bg-dark-card' : 'bg-white hover:bg-gray-100 shadow-md'
           }`}
         >
-          {sfxEnabled ? '🔊' : '🔇'}
-        </button>
+          <motion.span
+            key={sfxEnabled ? 'on' : 'off'}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 500 }}
+          >
+            {sfxEnabled ? '🔊' : '🔇'}
+          </motion.span>
+        </motion.button>
 
         {/* Admin/AI Generate Button - Only show if Supabase connected */}
         {isUsingSupabase && (
-          <button
-            onClick={() => setShowAdminModal(true)}
+          <motion.button
+            whileHover={{ scale: 1.1, rotate: [0, -10, 10, 0] }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              playClick()
+              mediumTap()
+              setShowAdminModal(true)
+            }}
             className={`p-3 rounded-full transition-all duration-300 ${
               isDark ? 'bg-dark-elevated hover:bg-dark-card' : 'bg-white hover:bg-gray-100 shadow-md'
             }`}
             title="إنشاء أسئلة بالذكاء الاصطناعي"
           >
-            ✨
-          </button>
+            <motion.span
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 3
+              }}
+            >
+              ✨
+            </motion.span>
+          </motion.button>
         )}
       </motion.div>
 
