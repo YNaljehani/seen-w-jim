@@ -9,8 +9,13 @@ import GameBoard from './components/game/GameBoard'
 import ResultsScreen from './components/game/ResultsScreen'
 
 function App() {
-  const { gameState, selectQuestion } = useGameStore()
+  const { gameState, selectQuestion, loadCategories, isLoading } = useGameStore()
   const { isDark } = useThemeStore()
+
+  // Load categories from Supabase on mount (falls back to default if unavailable)
+  useEffect(() => {
+    loadCategories()
+  }, [loadCategories])
 
   useEffect(() => {
     if (isDark) {

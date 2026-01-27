@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import { defaultCategories } from '../data/defaultQuestions'
+import { fetchCategories, generateAIQuestions, saveQuestion } from '../services/questionService'
+import { canUseSupabase } from '../lib/supabase'
 
 const initialPowerUps = {
   pit: { used: false, activeForQuestion: null },
@@ -31,6 +33,11 @@ export const useGameStore = create((set, get) => ({
   selectedCategories: [],
   currentQuestion: null,
   answeredQuestions: [],
+
+  // Loading state
+  isLoading: false,
+  loadError: null,
+  isUsingSupabase: false,
 
   // Timer
   timerSeconds: 60,
@@ -335,6 +342,98 @@ export const useGameStore = create((set, get) => ({
       set({ callTimerSeconds: callTimerSeconds - 1 })
     } else {
       get().endCallFriend()
+    }
+  },
+
+  // Load categories from Supabase (with fallback to default)
+  loadCategories: async () => {
+    // Skip if Supabase is not configured
+    if (!canUseSupabase()) {
+      set({ isUsingSupabase: false })
+      return
+    }
+
+    set({ isLoading: true, loadError: null })
+
+    try {
+      const categories = await fetchCategories()
+
+      // Only use Supabase data if we got categories with questions
+      const hasQuestions = categories.some(c => c.questions && c.questions.length > 0)
+
+      if (hasQuestions) {
+        set({
+          availableCategories: categories,
+          isLoading: false,
+          isUsingSupabase: true
+        })
+      } else {
+        // Fall back to default if no questions in database
+        set({
+          availableCategories: defaultCategories,
+          isLoading: false,
+          isUsingSupabase: false
+        })
+      }
+    } catch (error) {
+      console.warn('Failed to load from Supabase, using default questions:', error.message)
+      set({
+        availableCategories: defaultCategories,
+        isLoading: false,
+        loadError: error.message,
+        isUsingSupabase: false
+      })
+    }
+  },
+
+  // Generate more questions for a category using AI
+  generateMoreQuestions: async (categoryId, difficulty = 'medium', count = 1) => {
+    if (!canUseSupabase()) {
+      throw new Error('Supabase not configured')
+    }
+
+    const { availableCategories } = get()
+    const category = availableCategories.find(c => c.id === categoryId)
+
+    if (!category) {
+      throw new Error('Category not found')
+    }
+
+    set({ isLoading: true })
+
+    try {
+      const newQuestions = await generateAIQuestions(
+        categoryId,
+        category.name,
+        difficulty,
+        count
+      )
+
+      // Save each generated question to the database
+      const savedQuestions = await Promise.all(
+        newQuestions.map(q => saveQuestion({ ...q, categoryId }))
+      )
+
+      // Update the local state with new questions
+      const updatedCategories = availableCategories.map(c => {
+        if (c.id === categoryId) {
+          return {
+            ...c,
+            questions: [...c.questions, ...savedQuestions]
+          }
+        }
+        return c
+      })
+
+      set({
+        availableCategories: updatedCategories,
+        isLoading: false
+      })
+
+      return savedQuestions
+    } catch (error) {
+      set({ isLoading: false, loadError: error.message })
+      throw error
     }
   },
 
