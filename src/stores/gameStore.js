@@ -14,7 +14,11 @@ const initialTeam = (name) => ({
   name,
   score: 0,
   powerUps: { ...initialPowerUps },
-  selectedCategories: []
+  selectedCategories: [],
+  streak: 0,
+  maxStreak: 0,
+  correctAnswers: 0,
+  wrongAnswers: 0
 })
 
 export const useGameStore = create((set, get) => ({
@@ -199,23 +203,50 @@ export const useGameStore = create((set, get) => ({
     const isPitActive = activeTeam.powerUps.pit.activeForQuestion === currentQuestion.id
 
     if (isCorrect) {
+      // Update streak and stats for the scoring team
+      const newStreak = activeTeam.streak + 1
+      const newMaxStreak = Math.max(activeTeam.maxStreak, newStreak)
+      const teamUpdate = {
+        streak: newStreak,
+        maxStreak: newMaxStreak,
+        correctAnswers: activeTeam.correctAnswers + 1
+      }
+
       if (isPitActive) {
         const newOpponentScore = Math.max(0, opponentTeam.score - currentQuestion.points)
         if (currentTeam === 'A') {
-          set({ teamB: { ...teamB, score: newOpponentScore } })
+          set({
+            teamA: { ...teamA, ...teamUpdate },
+            teamB: { ...teamB, score: newOpponentScore, streak: 0 }
+          })
         } else {
-          set({ teamA: { ...teamA, score: newOpponentScore } })
+          set({
+            teamB: { ...teamB, ...teamUpdate },
+            teamA: { ...teamA, score: newOpponentScore, streak: 0 }
+          })
         }
       } else {
-        const newScore = (currentTeam === 'A' ? teamA : teamB).score + currentQuestion.points
+        const newScore = activeTeam.score + currentQuestion.points
         if (currentTeam === 'A') {
-          set({ teamA: { ...teamA, score: newScore } })
+          set({
+            teamA: { ...teamA, ...teamUpdate, score: newScore },
+            teamB: { ...teamB, streak: 0 }
+          })
         } else {
-          set({ teamB: { ...teamB, score: newScore } })
+          set({
+            teamB: { ...teamB, ...teamUpdate, score: newScore },
+            teamA: { ...teamA, streak: 0 }
+          })
         }
       }
       get().finishQuestion(true)
     } else {
+      // Reset streak and update wrong answers on wrong answer
+      if (currentTeam === 'A') {
+        set({ teamA: { ...teamA, streak: 0, wrongAnswers: teamA.wrongAnswers + 1 } })
+      } else {
+        set({ teamB: { ...teamB, streak: 0, wrongAnswers: teamB.wrongAnswers + 1 } })
+      }
       const doubleAnswer = activeTeam.powerUps.doubleAnswer
       if (doubleAnswer.attemptsRemaining > 0) {
         if (currentTeam === 'A') {
@@ -453,7 +484,8 @@ export const useGameStore = create((set, get) => ({
       isTimerRunning: false,
       timerPaused: false,
       activePowerUp: null,
-      showCallOverlay: false
+      showCallOverlay: false,
+      // Stats are reset via initialTeam
     })
   },
 

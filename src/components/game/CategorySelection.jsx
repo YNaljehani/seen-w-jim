@@ -3,6 +3,7 @@ import { useGameStore } from '../../stores/gameStore'
 import { useThemeStore } from '../../stores/themeStore'
 import { useSoundEffect } from '../../lib/sounds'
 import { useHaptic } from '../../hooks/useHaptic'
+import { CategoryGridSkeleton } from '../ui/Skeleton'
 
 // Stagger animation for grid items
 const containerVariants = {
@@ -38,7 +39,8 @@ export default function CategorySelection() {
     teamB,
     availableCategories,
     selectedCategories,
-    selectCategory
+    selectCategory,
+    isLoading
   } = useGameStore()
   const { isDark } = useThemeStore()
   const { playClick } = useSoundEffect()
@@ -182,6 +184,11 @@ export default function CategorySelection() {
       </motion.div>
 
       {/* Categories Grid */}
+      {isLoading ? (
+        <div className="flex-1 max-w-4xl mx-auto w-full">
+          <CategoryGridSkeleton count={12} />
+        </div>
+      ) : (
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -262,6 +269,7 @@ export default function CategorySelection() {
           )
         })}
       </motion.div>
+      )}
     </div>
   )
 }
