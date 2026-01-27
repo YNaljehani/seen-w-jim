@@ -209,6 +209,97 @@ seen-w-jim/
 
 ---
 
+## [1.3.0] - 2026-01-27
+
+### Added - Supabase Integration
+- **Database Storage**: Questions and categories now stored in Supabase PostgreSQL
+- **Supabase Client**: New `src/lib/supabase.js` for client configuration
+- **Question Service**: New `src/services/questionService.js` with:
+  - `fetchCategories()` - Load all categories with questions
+  - `fetchQuestionsForCategory(categoryId)` - Load specific category
+  - `generateAIQuestions()` - Call Edge Function for AI generation
+  - `saveQuestion()` - Persist new questions to database
+  - `getQuestionCounts()` - Get question statistics
+
+### Added - AI Question Generation
+- **Supabase Edge Function**: `supabase/functions/generate-questions/index.ts`
+- **Gemini AI Integration**: Uses Google Gemini API (free tier)
+- **Arabic Prompt Engineering**: Generates culturally relevant Arabic trivia
+- **Admin UI**: Sparkle button (✨) on home screen opens generator modal
+- **Generator Features**:
+  - Category selection dropdown
+  - Difficulty level (easy/medium/hard/expert)
+  - Question count (1-5)
+  - Real-time generation status
+  - Auto-save to database
+
+### Added - Database Schema
+- **Migration File**: `supabase/migrations/001_create_tables.sql`
+- **Tables**:
+  - `categories`: id, name, name_en, icon, created_at
+  - `questions`: id, category_id, question_text, question_type, correct_answer, options, difficulty, points, is_ai_generated, created_at
+- **Row Level Security**: Public read, authenticated insert
+- **Indexes**: Optimized queries on category_id and difficulty
+
+### Added - Offline Fallback
+- Game works without Supabase using `defaultQuestions.js`
+- Auto-detect Supabase configuration
+- Graceful degradation if API unavailable
+- Loading states during async operations
+
+### Added - Connection Status
+- Green dot indicator when connected to Supabase
+- Yellow loading indicator during data fetch
+- Version bumped to v1.3.0
+
+### Added - Documentation
+- **SUPABASE_SETUP.md**: Complete setup guide including:
+  - Supabase project creation
+  - API key configuration
+  - Database migration steps
+  - Edge Function deployment
+  - Troubleshooting guide
+- **Updated .env.example**: Added Supabase environment variables
+
+### Technical Changes
+- Added `@supabase/supabase-js` dependency
+- Updated `gameStore.js` with:
+  - `isLoading` state
+  - `loadError` state
+  - `isUsingSupabase` flag
+  - `loadCategories()` async action
+  - `generateMoreQuestions()` async action
+- Updated `App.jsx` to load categories on mount
+- Updated `Home.jsx` with:
+  - AI generator modal
+  - Connection status display
+  - Admin controls (when connected)
+
+### Files Added
+```
+seen-w-jim/
+├── src/
+│   ├── lib/
+│   │   └── supabase.js          # Supabase client
+│   └── services/
+│       └── questionService.js    # Question API
+├── supabase/
+│   ├── functions/
+│   │   └── generate-questions/
+│   │       └── index.ts          # Edge Function
+│   └── migrations/
+│       └── 001_create_tables.sql # DB schema
+├── SUPABASE_SETUP.md             # Setup guide
+└── .env.local                    # Local env vars (gitignored)
+```
+
+### Deployment
+- Deployed to Vercel with environment variables
+- Edge Function deployed to Supabase
+- GEMINI_API_KEY stored as Supabase secret
+
+---
+
 ## Future Updates
 
 _All changes will be logged here with dates_
@@ -218,5 +309,6 @@ _All changes will be logged here with dates_
 ## Notes
 
 - Sound files need to be added to `/public/sounds/`
-- AI question generation ready (needs Anthropic API key)
-- Supabase integration planned for multiplayer
+- AI question generation uses Gemini (free tier)
+- Supabase integration complete for persistent storage
+- Multiplayer sync still planned for future release

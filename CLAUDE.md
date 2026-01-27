@@ -14,7 +14,9 @@ An Arabic trivia game inspired by the Kuwaiti "Seen Jeem" game show. Two teams c
 - **State Management:** Zustand (with persist middleware)
 - **Animations:** Framer Motion
 - **Audio:** Howler.js (prepared, sounds not yet added)
-- **AI Integration:** @anthropic-ai/sdk (prepared for question generation)
+- **Database:** Supabase (PostgreSQL)
+- **AI Integration:** Google Gemini API (via Supabase Edge Functions)
+- **Deployment:** Vercel (frontend) + Supabase (backend)
 
 ## Build & Run Commands
 
@@ -47,23 +49,33 @@ seen-w-jim/
 │   │   │   ├── Card.jsx
 │   │   │   ├── Confetti.jsx
 │   │   │   └── Modal.jsx
-│   │   └── Home.jsx                 # Home screen
+│   │   └── Home.jsx                 # Home screen + AI generator
 │   ├── data/
-│   │   └── defaultQuestions.js      # 16 categories, 64 questions
+│   │   └── defaultQuestions.js      # 16 categories, 64 questions (fallback)
 │   ├── hooks/
 │   │   ├── useSound.js
 │   │   └── useTimer.js
 │   ├── lib/
+│   │   ├── supabase.js              # Supabase client configuration
 │   │   └── utils.js
+│   ├── services/
+│   │   └── questionService.js       # API for questions CRUD
 │   ├── stores/
 │   │   ├── audioStore.js            # Sound settings (persisted)
-│   │   ├── gameStore.js             # Main game state
+│   │   ├── gameStore.js             # Main game state + async loading
 │   │   └── themeStore.js            # Dark/light mode (persisted)
 │   ├── App.jsx                      # Main router/state machine
 │   ├── index.css                    # Tailwind + custom styles
 │   └── main.jsx
+├── supabase/
+│   ├── functions/
+│   │   └── generate-questions/
+│   │       └── index.ts             # Edge Function for AI generation
+│   └── migrations/
+│       └── 001_create_tables.sql    # Database schema
 ├── init/
 │   └── CHANGELOG.md                 # Version history
+├── SUPABASE_SETUP.md                # Supabase setup guide
 └── public/
 ```
 
@@ -156,17 +168,78 @@ home → team_setup → category_selection_A → category_selection_B → questi
 - Tailwind RTL is enabled via `dir="rtl"` in index.html
 - Use `text-right` for alignment when needed
 
+## Supabase Integration
+
+### Database Schema
+
+```sql
+-- categories table
+CREATE TABLE categories (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  name_en TEXT,
+  icon TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- questions table
+CREATE TABLE questions (
+  id TEXT PRIMARY KEY,
+  category_id TEXT REFERENCES categories(id),
+  question_text TEXT NOT NULL,
+  question_type TEXT CHECK (question_type IN ('mcq', 'open')),
+  correct_answer TEXT NOT NULL,
+  options JSONB,
+  difficulty TEXT CHECK (difficulty IN ('easy', 'medium', 'hard', 'expert')),
+  points INTEGER NOT NULL,
+  is_ai_generated BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### Environment Variables
+
+```env
+# .env.local (frontend)
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+
+# Supabase Edge Function Secrets
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+### Question Service API
+
+```javascript
+import { fetchCategories, generateAIQuestions, saveQuestion } from './services/questionService'
+
+// Load all categories with questions
+const categories = await fetchCategories()
+
+// Generate AI questions
+const newQuestions = await generateAIQuestions(categoryId, categoryName, 'medium', 3)
+
+// Save a question
+await saveQuestion({ categoryId, questionText, ... })
+```
+
+### AI Question Generation
+
+The game uses Google Gemini API (free tier) via Supabase Edge Functions to generate Arabic trivia questions. Access via the ✨ button on the home screen when connected to Supabase.
+
 ## Development Notes
 
 - All text content is in Arabic
 - Theme preference persists in localStorage
-- No backend required - local multiplayer only
+- Game works offline with default questions (fallback mode)
 - Join Game modal exists but actual room syncing not implemented yet
 - Sound files should be added to `/public/sounds/`
+- Green dot on home screen indicates Supabase connection
+- ✨ button appears when Supabase is connected (for AI generation)
 
 ## Future Enhancements (Planned)
 
-- Supabase integration for real multiplayer
-- AI question generation using Anthropic API
+- Real-time multiplayer sync via Supabase Realtime
 - Sound effects and music
-- Additional categories and questions
+- More question categories
+- Leaderboards and statistics
