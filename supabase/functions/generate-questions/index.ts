@@ -90,9 +90,9 @@ serve(async (req: Request) => {
 
 ملاحظة: إذا كان نوع السؤال "open"، لا تضف حقل "options".`
 
-    // Call Gemini API (using gemini-1.5-flash for stability)
+    // Call Gemini API
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${geminiKey}`,
       {
         method: 'POST',
         headers: {
