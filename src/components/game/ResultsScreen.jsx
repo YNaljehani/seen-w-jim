@@ -2,17 +2,29 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../../stores/gameStore'
 import { useThemeStore } from '../../stores/themeStore'
+import { useSoundEffect } from '../../lib/sounds'
+import { useHaptic } from '../../hooks/useHaptic'
 import Button from '../ui/Button'
 import Confetti from '../ui/Confetti'
 
 export default function ResultsScreen() {
   const { teamA, teamB, resetGame, newGame } = useGameStore()
   const { isDark } = useThemeStore()
+  const { playWin, playClick } = useSoundEffect()
+  const { success, mediumTap } = useHaptic()
   const [showConfetti, setShowConfetti] = useState(true)
 
   const winner = teamA.score > teamB.score ? 'A' : teamB.score > teamA.score ? 'B' : 'tie'
   const winningTeam = winner === 'A' ? teamA : winner === 'B' ? teamB : null
   const losingTeam = winner === 'A' ? teamB : winner === 'B' ? teamA : null
+
+  // Play win sound on mount
+  useEffect(() => {
+    if (winner !== 'tie') {
+      playWin()
+      success()
+    }
+  }, [])
 
   useEffect(() => {
     // Stop confetti after 5 seconds
@@ -149,7 +161,11 @@ export default function ResultsScreen() {
           variant="primary"
           size="xl"
           className="w-full"
-          onClick={newGame}
+          onClick={() => {
+            playClick()
+            mediumTap()
+            newGame()
+          }}
         >
           <span>🔄</span>
           لعبة جديدة
@@ -159,7 +175,11 @@ export default function ResultsScreen() {
           variant="outline"
           size="lg"
           className="w-full"
-          onClick={resetGame}
+          onClick={() => {
+            playClick()
+            mediumTap()
+            resetGame()
+          }}
         >
           <span>🏠</span>
           الرئيسية

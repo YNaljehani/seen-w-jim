@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../../stores/gameStore'
 import { useThemeStore } from '../../stores/themeStore'
+import { useSoundEffect } from '../../lib/sounds'
+import { useHaptic } from '../../hooks/useHaptic'
 import Scoreboard from './Scoreboard'
 import Timer from './Timer'
 import QuestionCard from './QuestionCard'
 import PowerUpPanel from './PowerUpPanel'
 import CallFriendOverlay from './CallFriendOverlay'
 import Button from '../ui/Button'
+import Confetti from '../ui/Confetti'
 
 export default function GameBoard() {
   const {
@@ -26,9 +29,13 @@ export default function GameBoard() {
     selectedCategories
   } = useGameStore()
   const { isDark } = useThemeStore()
+  const { playCorrect, playWrong, playClick, playPowerUp, playSteal, playReveal, playGameStart } = useSoundEffect()
+  const { success, error, mediumTap } = useHaptic()
 
   const [showAnswer, setShowAnswer] = useState(false)
   const [questionReady, setQuestionReady] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [feedbackState, setFeedbackState] = useState(null) // 'correct' | 'wrong' | null
 
   const team = currentTeam === 'A' ? teamA : teamB
   const teamColor = currentTeam === 'A' ? 'teamA' : 'teamB'
@@ -42,28 +49,55 @@ export default function GameBoard() {
   useEffect(() => {
     setShowAnswer(false)
     setQuestionReady(false)
+    setFeedbackState(null)
+    setShowConfetti(false)
     stopTimer()
   }, [currentQuestion?.id, stopTimer])
+
+  // Play steal sound when entering steal mode
+  useEffect(() => {
+    if (isStealMode) {
+      playSteal()
+    }
+  }, [isStealMode, playSteal])
 
   const handleStartQuestion = () => {
     setQuestionReady(true)
     startTimer()
+    playGameStart()
+    mediumTap()
   }
 
   const handleRevealAnswer = () => {
     setShowAnswer(true)
     stopTimer()
+    playReveal()
+    mediumTap()
   }
 
   const handleMarkCorrect = () => {
-    markAnswer(true)
+    setFeedbackState('correct')
+    playCorrect()
+    success()
+    setShowConfetti(true)
+    setTimeout(() => {
+      setShowConfetti(false)
+      markAnswer(true)
+    }, 1500)
   }
 
   const handleMarkWrong = () => {
-    markAnswer(false)
+    setFeedbackState('wrong')
+    playWrong()
+    error()
+    setTimeout(() => {
+      setFeedbackState(null)
+      markAnswer(false)
+    }, 800)
   }
 
   const handleSkip = () => {
+    playClick()
     finishQuestion(false)
   }
 
@@ -77,6 +111,9 @@ export default function GameBoard() {
 
   return (
     <div className="min-h-screen flex flex-col p-4">
+      {/* Confetti on correct answer */}
+      {showConfetti && <Confetti />}
+
       {/* Call Friend Overlay */}
       <CallFriendOverlay />
 
@@ -200,6 +237,7 @@ export default function GameBoard() {
                   question={currentQuestion}
                   showAnswer={showAnswer}
                   onReveal={handleRevealAnswer}
+                  feedbackState={feedbackState}
                 />
               </motion.div>
             )}

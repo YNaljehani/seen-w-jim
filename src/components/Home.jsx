@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../stores/gameStore'
 import { useThemeStore } from '../stores/themeStore'
 import { useAudioStore } from '../stores/audioStore'
+import { useSoundEffect } from '../lib/sounds'
+import { useHaptic } from '../hooks/useHaptic'
 
 export default function Home() {
   const setGameState = useGameStore((state) => state.setGameState)
@@ -15,6 +17,8 @@ export default function Home() {
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const sfxEnabled = useAudioStore((state) => state.sfxEnabled)
   const toggleSfx = useAudioStore((state) => state.toggleSfx)
+  const { playClick, playGameStart } = useSoundEffect()
+  const { mediumTap } = useHaptic()
 
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [joinCode, setJoinCode] = useState('')
@@ -26,16 +30,22 @@ export default function Home() {
   const [genResult, setGenResult] = useState(null)
 
   const handleCreateGame = () => {
+    playGameStart()
+    mediumTap()
     generateRoomCode()
     setGameState('team_setup')
   }
 
   const handleJoinGame = () => {
+    playClick()
+    mediumTap()
     setShowJoinModal(true)
   }
 
   const handleSubmitJoin = () => {
     if (joinCode.trim().length >= 4) {
+      playGameStart()
+      mediumTap()
       generateRoomCode()
       setGameState('team_setup')
       setShowJoinModal(false)

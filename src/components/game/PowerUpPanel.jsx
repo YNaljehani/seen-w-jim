@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameStore } from '../../stores/gameStore'
 import { useThemeStore } from '../../stores/themeStore'
+import { useSoundEffect } from '../../lib/sounds'
+import { useHaptic } from '../../hooks/useHaptic'
 import Modal from '../ui/Modal'
 
 const POWERUPS = {
@@ -34,22 +36,23 @@ const POWERUPS = {
 export default function PowerUpPanel() {
   const { currentTeam, teamA, teamB, usePowerUp, isStealMode } = useGameStore()
   const { isDark } = useThemeStore()
+  const { playPowerUp, playClick } = useSoundEffect()
+  const { mediumTap, success } = useHaptic()
   const [showConfirm, setShowConfirm] = useState(null)
 
   const team = currentTeam === 'A' ? teamA : teamB
   const teamColor = currentTeam === 'A' ? 'teamA' : 'teamB'
 
   const handleUsePowerUp = (powerUpKey) => {
-    // Pit must be used before seeing the question
-    if (powerUpKey === 'pit') {
-      // For now, allow it but show warning
-    }
-
+    playClick()
+    mediumTap()
     setShowConfirm(powerUpKey)
   }
 
   const confirmPowerUp = () => {
     if (showConfirm) {
+      playPowerUp()
+      success()
       usePowerUp(showConfirm)
       setShowConfirm(null)
     }
