@@ -204,10 +204,23 @@ export default async function handler(req, res) {
 
     } catch (error) {
       console.error('Gemini API failed, using fallback:', error.message)
+      // Include error details in fallback response for debugging
+      const fallbackQs = getFallbackQuestions(categoryName, difficulty, count)
+      const questions = fallbackQs.map(q => ({
+        ...q,
+        categoryId,
+        isAiGenerated: false,
+        isFallback: true
+      }))
+      return res.status(200).json({
+        questions,
+        warning: 'تم استخدام أسئلة احتياطية - AI غير متاح حالياً',
+        debugError: error.message
+      })
     }
   }
 
-  // Fallback questions
+  // No API key - Fallback questions
   const fallbackQs = getFallbackQuestions(categoryName, difficulty, count)
   const questions = fallbackQs.map(q => ({
     ...q,
