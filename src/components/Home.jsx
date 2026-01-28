@@ -102,8 +102,13 @@ export default function Home() {
     setGenerating(true)
     setGenResult(null)
     try {
-      const questions = await generateMoreQuestions(selectedCategory, selectedDifficulty, questionCount)
-      setGenResult({ success: true, count: questions.length })
+      const result = await generateMoreQuestions(selectedCategory, selectedDifficulty, questionCount)
+      setGenResult({
+        success: true,
+        count: result.questions?.length || 1,
+        warning: result.warning,
+        isFallback: result.isFallback
+      })
     } catch (error) {
       setGenResult({ success: false, error: error.message })
     }
@@ -218,14 +223,22 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className={`mb-4 p-3 rounded-xl ${
             genResult.success
-              ? 'bg-green-500/20 text-green-400'
+              ? genResult.isFallback
+                ? 'bg-yellow-500/20 text-yellow-400'
+                : 'bg-green-500/20 text-green-400'
               : 'bg-red-500/20 text-red-400'
           }`}
         >
-          {genResult.success
-            ? `تم إنشاء ${genResult.count} سؤال بنجاح!`
-            : `خطأ: ${genResult.error}`
-          }
+          {genResult.success ? (
+            <>
+              <div>تم إنشاء {genResult.count} سؤال بنجاح!</div>
+              {genResult.warning && (
+                <div className="text-sm mt-1 opacity-80">{genResult.warning}</div>
+              )}
+            </>
+          ) : (
+            `خطأ: ${genResult.error}`
+          )}
         </motion.div>
       )}
 

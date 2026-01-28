@@ -37,6 +37,7 @@ export const useGameStore = create((set, get) => ({
   selectedCategories: [],
   currentQuestion: null,
   answeredQuestions: [],
+  pickingTeam: 'A', // Tracks which team originally picked the question (for alternation)
 
   // Loading state
   isLoading: false,
@@ -158,7 +159,8 @@ export const useGameStore = create((set, get) => ({
       gameState: 'playing',
       timerSeconds: get().settings.timerA,
       isTimerRunning: false,
-      isStealMode: false
+      isStealMode: false,
+      pickingTeam: get().currentTeam
     })
   },
 
@@ -287,7 +289,7 @@ export const useGameStore = create((set, get) => ({
   },
 
   finishQuestion: (wasCorrect) => {
-    const { currentQuestion, answeredQuestions, selectedCategories, teamA, teamB, currentTeam } = get()
+    const { currentQuestion, answeredQuestions, selectedCategories, teamA, teamB, currentTeam, pickingTeam } = get()
 
     if (!currentQuestion) return
 
@@ -311,9 +313,8 @@ export const useGameStore = create((set, get) => ({
     if (newAnsweredQuestions.length >= totalQuestions) {
       set({ gameState: 'game_over', currentQuestion: null })
     } else {
-      // Alternate teams - the team that answered (or failed) picks next
-      // If correct, same team picks; if wrong/timeout, other team picks
-      const nextTeam = wasCorrect ? currentTeam : (currentTeam === 'A' ? 'B' : 'A')
+      // Always alternate teams based on who picked the question
+      const nextTeam = pickingTeam === 'A' ? 'B' : 'A'
       set({
         gameState: 'question_board',
         currentQuestion: null,
@@ -387,25 +388,31 @@ export const useGameStore = create((set, get) => ({
     set({ isLoading: true, loadError: null })
 
     try {
-      const categories = await fetchCategories()
+      const supabaseCategories = await fetchCategories()
 
-      // Only use Supabase data if we got categories with questions
-      const hasQuestions = categories.some(c => c.questions && c.questions.length > 0)
+      // Merge: use Supabase questions when available, fall back to default questions
+      const mergedCategories = defaultCategories.map(defaultCat => {
+        const supabaseCat = supabaseCategories.find(sc => sc.id === defaultCat.id)
+        if (supabaseCat && supabaseCat.questions && supabaseCat.questions.length >= 4) {
+          // Supabase has enough questions for this category
+          return { ...defaultCat, questions: supabaseCat.questions }
+        }
+        // Use default questions (or merge if Supabase has some but not enough)
+        return defaultCat
+      })
 
-      if (hasQuestions) {
-        set({
-          availableCategories: categories,
-          isLoading: false,
-          isUsingSupabase: true
-        })
-      } else {
-        // Fall back to default if no questions in database
-        set({
-          availableCategories: defaultCategories,
-          isLoading: false,
-          isUsingSupabase: false
-        })
-      }
+      // Also add any Supabase-only categories that aren't in defaults
+      supabaseCategories.forEach(sc => {
+        if (!defaultCategories.find(dc => dc.id === sc.id) && sc.questions && sc.questions.length >= 4) {
+          mergedCategories.push(sc)
+        }
+      })
+
+      set({
+        availableCategories: mergedCategories,
+        isLoading: false,
+        isUsingSupabase: true
+      })
     } catch (error) {
       console.warn('Failed to load from Supabase, using default questions:', error.message)
       set({
@@ -433,17 +440,22 @@ export const useGameStore = create((set, get) => ({
     set({ isLoading: true })
 
     try {
-      const newQuestions = await generateAIQuestions(
+      const result = await generateAIQuestions(
         categoryId,
         category.name,
         difficulty,
         count
       )
 
-      // Save each generated question to the database
-      const savedQuestions = await Promise.all(
-        newQuestions.map(q => saveQuestion({ ...q, categoryId }))
-      )
+      const { questions: newQuestions, warning, isFallback } = result
+
+      // Only save to database if not using fallback questions
+      let savedQuestions = newQuestions
+      if (!isFallback) {
+        savedQuestions = await Promise.all(
+          newQuestions.map(q => saveQuestion({ ...q, categoryId }))
+        )
+      }
 
       // Update the local state with new questions
       const updatedCategories = availableCategories.map(c => {
@@ -461,7 +473,8 @@ export const useGameStore = create((set, get) => ({
         isLoading: false
       })
 
-      return savedQuestions
+      // Return both questions and any warning
+      return { questions: savedQuestions, warning, isFallback }
     } catch (error) {
       set({ isLoading: false, loadError: error.message })
       throw error
@@ -476,6 +489,7 @@ export const useGameStore = create((set, get) => ({
       teamA: initialTeam('الفريق الأول'),
       teamB: initialTeam('الفريق الثاني'),
       currentTeam: 'A',
+      pickingTeam: 'A',
       isStealMode: false,
       selectedCategories: [],
       currentQuestion: null,
@@ -496,6 +510,7 @@ export const useGameStore = create((set, get) => ({
       teamA: { ...initialTeam(teamA.name) },
       teamB: { ...initialTeam(teamB.name) },
       currentTeam: 'A',
+      pickingTeam: 'A',
       isStealMode: false,
       selectedCategories: [],
       currentQuestion: null,

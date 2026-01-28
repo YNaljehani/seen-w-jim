@@ -1,22 +1,12 @@
-# CLAUDE.md - سين وجيم (Seen w Jim)
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-An Arabic trivia game inspired by the Kuwaiti "Seen Jeem" game show. Two teams compete by answering questions across different categories in a Jeopardy-style format. Built for social gatherings with local multiplayer support.
+سين وجيم (Seen w Jim) - An Arabic trivia game inspired by the Kuwaiti "Seen Jeem" game show. Two teams compete by answering questions across categories in a Jeopardy-style format.
 
 **Live Demo:** https://seen-w-jim.vercel.app/
-**GitHub:** https://github.com/YNaljehani/seen-w-jim
-
-## Tech Stack
-
-- **Framework:** React 18 + Vite
-- **Styling:** Tailwind CSS (RTL support enabled)
-- **State Management:** Zustand (with persist middleware)
-- **Animations:** Framer Motion
-- **Audio:** Howler.js (prepared, sounds not yet added)
-- **Database:** Supabase (PostgreSQL)
-- **AI Integration:** Google Gemini API (via Supabase Edge Functions)
-- **Deployment:** Vercel (frontend) + Supabase (backend)
 
 ## Build & Run Commands
 
@@ -27,90 +17,73 @@ npm run build        # Build for production
 npm run preview      # Preview production build
 ```
 
-## Project Structure
+## Tech Stack
 
-```
-seen-w-jim/
-├── src/
-│   ├── components/
-│   │   ├── game/                    # Game-specific components
-│   │   │   ├── CallFriendOverlay.jsx
-│   │   │   ├── CategorySelection.jsx
-│   │   │   ├── GameBoard.jsx        # Main playing screen
-│   │   │   ├── PowerUpPanel.jsx
-│   │   │   ├── QuestionBoard.jsx    # Jeopardy-style selection grid
-│   │   │   ├── QuestionCard.jsx
-│   │   │   ├── ResultsScreen.jsx
-│   │   │   ├── Scoreboard.jsx
-│   │   │   ├── TeamSetup.jsx
-│   │   │   └── Timer.jsx
-│   │   ├── ui/                      # Reusable UI components
-│   │   │   ├── Button.jsx
-│   │   │   ├── Card.jsx
-│   │   │   ├── Confetti.jsx
-│   │   │   └── Modal.jsx
-│   │   └── Home.jsx                 # Home screen + AI generator
-│   ├── data/
-│   │   └── defaultQuestions.js      # 16 categories, 64 questions (fallback)
-│   ├── hooks/
-│   │   ├── useSound.js
-│   │   └── useTimer.js
-│   ├── lib/
-│   │   ├── supabase.js              # Supabase client configuration
-│   │   └── utils.js
-│   ├── services/
-│   │   └── questionService.js       # API for questions CRUD
-│   ├── stores/
-│   │   ├── audioStore.js            # Sound settings (persisted)
-│   │   ├── gameStore.js             # Main game state + async loading
-│   │   └── themeStore.js            # Dark/light mode (persisted)
-│   ├── App.jsx                      # Main router/state machine
-│   ├── index.css                    # Tailwind + custom styles
-│   └── main.jsx
-├── supabase/
-│   ├── functions/
-│   │   └── generate-questions/
-│   │       └── index.ts             # Edge Function for AI generation
-│   └── migrations/
-│       └── 001_create_tables.sql    # Database schema
-├── init/
-│   └── CHANGELOG.md                 # Version history
-├── SUPABASE_SETUP.md                # Supabase setup guide
-└── public/
-```
+- React 18 + Vite
+- Tailwind CSS (RTL enabled)
+- Zustand (state management with persist)
+- Framer Motion (animations)
+- Supabase (database + Edge Functions)
+- Google Gemini API (AI question generation)
 
-## Game Flow (State Machine)
+## Architecture
 
+### State Machine (App.jsx)
 ```
 home → team_setup → category_selection_A → category_selection_B → question_board ↔ playing → game_over
 ```
 
-- **home:** Main menu (Create Game, Join Game, Spectator)
-- **team_setup:** Enter team names
-- **category_selection_A/B:** Each team selects 3 categories (6 total)
-- **question_board:** Jeopardy-style grid - pick category + point value
-- **playing:** Question display with timer
-- **game_over:** Final scores and winner
+### Key Stores (src/stores/)
+- **gameStore.js** - Main game state, teams, questions, power-ups, async category loading
+- **themeStore.js** - Dark/light mode (persisted)
+- **audioStore.js** - Sound settings (persisted)
 
-## Key State (gameStore.js)
+### Data Flow
+1. App loads → `loadCategories()` fetches from Supabase (falls back to `defaultQuestions.js`)
+2. Teams select 3 categories each → `selectedCategories[]`
+3. Questions displayed in Jeopardy grid → user picks category + points
+4. Timer runs, team answers, steal mode if wrong
+5. Power-ups modify gameplay (pit, call friend, double answer, rest)
 
+### Supabase Integration
+- **Database:** categories + questions tables
+- **Edge Function:** `supabase/functions/generate-questions/` - Gemini AI generation with fallback questions
+- **Service Layer:** `src/services/questionService.js` - CRUD operations
+
+## Important Patterns
+
+### Zustand Selectors
+Use individual selectors to avoid re-render issues:
 ```javascript
-{
-  gameState: 'home',                    // Current screen
-  teamA/teamB: { name, score, powerUps, selectedCategories },
-  currentTeam: 'A' | 'B',               // Whose turn
-  isStealMode: boolean,                 // Opponent stealing?
-  selectedCategories: [],               // 6 category IDs
-  currentQuestion: null | {...},        // Active question
-  answeredQuestions: [],                // Completed questions
-  timerSeconds: number,
-  isTimerRunning: boolean,
-  activePowerUp: null | 'pit' | 'callFriend' | 'doubleAnswer' | 'rest'
-}
+// Correct
+const setGameState = useGameStore((state) => state.setGameState)
+
+// Avoid - causes unnecessary re-renders
+const { setGameState } = useGameStore()
 ```
 
-## Scoring System
+### RTL Support
+- `dir="rtl"` set in index.html
+- All text content in Arabic
+- Use `text-right` for explicit alignment
 
+### Mobile/Desktop Detection
+Components like Home.jsx detect mobile via `window.innerWidth < 768` and render BottomSheet vs Modal accordingly.
+
+## Environment Variables
+
+```env
+# .env.local (frontend)
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJ...
+
+# Supabase Edge Function Secrets (via dashboard)
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+## Game Mechanics
+
+### Scoring
 | Difficulty | Points |
 |------------|--------|
 | Easy       | 100    |
@@ -118,71 +91,25 @@ home → team_setup → category_selection_A → category_selection_B → questi
 | Hard       | 300    |
 | Expert     | 500    |
 
-## Power-Ups (4 per team)
+### Timer
+- Main team: 60 seconds
+- Steal attempt: 30 seconds
 
-1. **🕳️ الحفرة (The Pit):** Deduct points from opponent if answered correctly
-2. **📞 اتصال بصديق (Call a Friend):** Pause timer, 60s to call
-3. **✌️ جاوب جوابين (Double Answer):** Two attempts at answering
-4. **😴 استريح (Rest):** Block opponent player
+### Power-Ups (4 per team)
+1. 🕳️ الحفرة - Deduct points from opponent
+2. 📞 اتصال بصديق - Pause timer, 60s to call
+3. ✌️ جاوب جوابين - Two answer attempts
+4. 😴 استريح - Block opponent player
 
-## Timer Rules
-
-- **Main team:** 60 seconds
-- **Steal attempt:** 30 seconds
-- Timer changes color: green → yellow → red as time runs out
-
-## Question Format
-
-```javascript
-{
-  id: string,
-  question: string,           // Arabic text
-  type: 'mcq' | 'open',
-  difficulty: 'easy' | 'medium' | 'hard' | 'expert',
-  points: 100 | 200 | 300 | 500,
-  options: ['أ', 'ب', 'ج', 'د'],  // For MCQ
-  answer: string,
-  answerIndex: number             // For MCQ
-}
-```
-
-## Categories (16 total)
-
-⚽ رياضة | 🎬 أفلام وسينما | 🌍 جغرافيا | 🕌 إسلاميات | 💻 تقنية | 🇸🇦 سعودي | 🇰🇼 كويتي | 🎵 موسيقى وفن | 📜 تاريخ | 🍽️ طعام ومطبخ | 🔬 علوم | 🎮 ألعاب فيديو | 🦁 حيوانات | 📖 لغة عربية | 🚀 فضاء | 🇦🇪 إماراتي
-
-## Common Issues & Solutions
-
-### Buttons not responding
-- Ensure z-index is set (use `z-10` class)
-- Use regular `<button>` instead of `motion.button` for critical buttons
-- Use individual Zustand selectors instead of destructuring:
-  ```javascript
-  // Good
-  const setGameState = useGameStore((state) => state.setGameState)
-
-  // Avoid
-  const { setGameState } = useGameStore()
-  ```
-
-### RTL Layout
-- Tailwind RTL is enabled via `dir="rtl"` in index.html
-- Use `text-right` for alignment when needed
-
-## Supabase Integration
-
-### Database Schema
+## Database Schema
 
 ```sql
--- categories table
 CREATE TABLE categories (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  name_en TEXT,
-  icon TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  icon TEXT NOT NULL
 );
 
--- questions table
 CREATE TABLE questions (
   id TEXT PRIMARY KEY,
   category_id TEXT REFERENCES categories(id),
@@ -192,54 +119,12 @@ CREATE TABLE questions (
   options JSONB,
   difficulty TEXT CHECK (difficulty IN ('easy', 'medium', 'hard', 'expert')),
   points INTEGER NOT NULL,
-  is_ai_generated BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  is_ai_generated BOOLEAN DEFAULT FALSE
 );
 ```
 
-### Environment Variables
+## Current Limitations
 
-```env
-# .env.local (frontend)
-VITE_SUPABASE_URL=https://xxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
-
-# Supabase Edge Function Secrets
-GEMINI_API_KEY=your-gemini-api-key
-```
-
-### Question Service API
-
-```javascript
-import { fetchCategories, generateAIQuestions, saveQuestion } from './services/questionService'
-
-// Load all categories with questions
-const categories = await fetchCategories()
-
-// Generate AI questions
-const newQuestions = await generateAIQuestions(categoryId, categoryName, 'medium', 3)
-
-// Save a question
-await saveQuestion({ categoryId, questionText, ... })
-```
-
-### AI Question Generation
-
-The game uses Google Gemini API (free tier) via Supabase Edge Functions to generate Arabic trivia questions. Access via the ✨ button on the home screen when connected to Supabase.
-
-## Development Notes
-
-- All text content is in Arabic
-- Theme preference persists in localStorage
-- Game works offline with default questions (fallback mode)
-- Join Game modal exists but actual room syncing not implemented yet
-- Sound files should be added to `/public/sounds/`
-- Green dot on home screen indicates Supabase connection
-- ✨ button appears when Supabase is connected (for AI generation)
-
-## Future Enhancements (Planned)
-
-- Real-time multiplayer sync via Supabase Realtime
-- Sound effects and music
-- More question categories
-- Leaderboards and statistics
+- Join Game UI exists but multiplayer sync not implemented
+- Sound files placeholder (add to `/public/sounds/`)
+- AI generation requires valid Gemini API key; falls back to pre-generated questions

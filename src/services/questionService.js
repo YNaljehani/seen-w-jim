@@ -89,7 +89,7 @@ export async function fetchQuestionsForCategory(categoryId) {
  * @param {string} categoryName - The category name in Arabic
  * @param {string} difficulty - The difficulty level
  * @param {number} count - Number of questions to generate
- * @returns {Promise<Array>} Array of generated questions
+ * @returns {Promise<{questions: Array, warning?: string, isFallback?: boolean}>} Generated questions with optional warning
  */
 export async function generateAIQuestions(categoryId, categoryName, difficulty = 'medium', count = 1) {
   if (!canUseSupabase()) {
@@ -109,7 +109,12 @@ export async function generateAIQuestions(categoryId, categoryName, difficulty =
     throw new Error(`Failed to generate questions: ${error.message}`)
   }
 
-  return data.questions
+  // Return both questions and any warning message
+  return {
+    questions: data.questions,
+    warning: data.warning || null,
+    isFallback: data.questions?.[0]?.isFallback || false
+  }
 }
 
 /**

@@ -45,8 +45,20 @@ export default function QuestionBoard({ onSelectQuestion }) {
 
   const getQuestionForCell = (categoryId, points) => {
     const category = availableCategories.find(c => c.id === categoryId)
-    if (!category) return null
-    return category.questions.find(q => q.points === points)
+    if (!category || !category.questions || category.questions.length === 0) return null
+
+    // First try exact match by points
+    const exactMatch = category.questions.find(q => q.points === points)
+    if (exactMatch) return exactMatch
+
+    // Fallback: map questions to rows by index (sorted by points)
+    const pointIndex = POINT_VALUES.indexOf(points)
+    const sorted = [...category.questions].sort((a, b) => (a.points || 0) - (b.points || 0))
+    if (pointIndex < sorted.length) {
+      return { ...sorted[pointIndex], points } // Assign the expected points for grid consistency
+    }
+
+    return null
   }
 
   const handleSelectQuestion = (categoryId, question) => {

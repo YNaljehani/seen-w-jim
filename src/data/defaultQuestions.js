@@ -611,7 +611,7 @@ export const defaultCategories = [
     icon: '🚀',
     questions: [
       {
-        id: 'sp1',
+        id: 'spc1',
         questionText: 'ما هو أقرب كوكب للشمس؟',
         questionType: 'mcq',
         correctAnswer: 'عطارد',
@@ -620,7 +620,7 @@ export const defaultCategories = [
         points: 100
       },
       {
-        id: 'sp2',
+        id: 'spc2',
         questionText: 'من هو أول رائد فضاء عربي؟',
         questionType: 'mcq',
         correctAnswer: 'الأمير سلطان بن سلمان',
@@ -629,7 +629,7 @@ export const defaultCategories = [
         points: 200
       },
       {
-        id: 'sp3',
+        id: 'spc3',
         questionText: 'كم يبلغ عدد أقمار كوكب المشتري تقريباً؟',
         questionType: 'mcq',
         correctAnswer: '95 قمراً',
@@ -638,7 +638,7 @@ export const defaultCategories = [
         points: 300
       },
       {
-        id: 'sp4',
+        id: 'spc4',
         questionText: 'في أي سنة هبط أول إنسان على سطح القمر؟',
         questionType: 'open',
         correctAnswer: '1969',
