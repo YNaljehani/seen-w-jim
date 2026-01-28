@@ -424,12 +424,8 @@ export const useGameStore = create((set, get) => ({
     }
   },
 
-  // Generate more questions for a category using AI
+  // Generate more questions for a category using AI (via Vercel API)
   generateMoreQuestions: async (categoryId, difficulty = 'medium', count = 1) => {
-    if (!canUseSupabase()) {
-      throw new Error('Supabase not configured')
-    }
-
     const { availableCategories } = get()
     const category = availableCategories.find(c => c.id === categoryId)
 
@@ -449,12 +445,16 @@ export const useGameStore = create((set, get) => ({
 
       const { questions: newQuestions, warning, isFallback } = result
 
-      // Only save to database if not using fallback questions
+      // Save to Supabase DB if available and not fallback
       let savedQuestions = newQuestions
-      if (!isFallback) {
-        savedQuestions = await Promise.all(
-          newQuestions.map(q => saveQuestion({ ...q, categoryId }))
-        )
+      if (!isFallback && canUseSupabase()) {
+        try {
+          savedQuestions = await Promise.all(
+            newQuestions.map(q => saveQuestion({ ...q, categoryId }))
+          )
+        } catch (saveError) {
+          console.warn('Failed to save to DB, using questions locally:', saveError.message)
+        }
       }
 
       // Update the local state with new questions
@@ -473,7 +473,6 @@ export const useGameStore = create((set, get) => ({
         isLoading: false
       })
 
-      // Return both questions and any warning
       return { questions: savedQuestions, warning, isFallback }
     } catch (error) {
       set({ isLoading: false, loadError: error.message })

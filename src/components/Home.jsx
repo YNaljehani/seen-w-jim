@@ -435,8 +435,8 @@ export default function Home() {
           </motion.span>
         </motion.button>
 
-        {/* Admin/AI Generate Button */}
-        {isUsingSupabase && (
+        {/* Admin/AI Generate Button - always available (uses Vercel API) */}
+        {(
           <motion.button
             whileHover={{ scale: 1.1, rotate: [0, -10, 10, 0] }}
             whileTap={{ scale: 0.9 }}

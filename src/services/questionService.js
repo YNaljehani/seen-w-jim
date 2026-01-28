@@ -84,7 +84,7 @@ export async function fetchQuestionsForCategory(categoryId) {
 }
 
 /**
- * Generate new questions using AI via Edge Function
+ * Generate new questions using AI via Vercel Serverless Function
  * @param {string} categoryId - The category ID
  * @param {string} categoryName - The category name in Arabic
  * @param {string} difficulty - The difficulty level
@@ -92,24 +92,19 @@ export async function fetchQuestionsForCategory(categoryId) {
  * @returns {Promise<{questions: Array, warning?: string, isFallback?: boolean}>} Generated questions with optional warning
  */
 export async function generateAIQuestions(categoryId, categoryName, difficulty = 'medium', count = 1) {
-  if (!canUseSupabase()) {
-    throw new Error('Supabase not configured')
-  }
-
-  const { data, error } = await supabase.functions.invoke('generate-questions', {
-    body: {
-      categoryId,
-      categoryName,
-      difficulty,
-      count
-    }
+  const response = await fetch('/api/generate-questions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ categoryId, categoryName, difficulty, count })
   })
 
-  if (error) {
-    throw new Error(`Failed to generate questions: ${error.message}`)
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.error || `API error: ${response.status}`)
   }
 
-  // Return both questions and any warning message
+  const data = await response.json()
+
   return {
     questions: data.questions,
     warning: data.warning || null,
