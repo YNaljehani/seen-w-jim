@@ -1,5 +1,5 @@
 // Vercel Serverless Function for AI Question Generation
-// Uses Google Gemini to generate Arabic trivia questions with fallback
+// Uses Anthropic Claude API to generate Arabic trivia questions with fallback
 
 const DIFFICULTY_POINTS = {
   easy: 100,
@@ -111,10 +111,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'categoryId and categoryName are required' })
   }
 
-  const geminiKey = process.env.GEMINI_API_KEY
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
 
-  // Try Gemini API
-  if (geminiKey) {
+  // Try Claude API
+  if (anthropicKey) {
     try {
       const typeInstruction = questionType === 'open'
         ? 'السؤال يجب أن يكون من نوع "open" (إجابة مفتوحة قصيرة)'
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
 - السؤال باللغة العربية الفصحى
 - ${typeInstruction}
 - إذا كان اختيار من متعدد، قدم 4 خيارات متنوعة وواقعية
-- تأكد من صحة المعلومات
+- تأكد من صحة المعلومات ودقتها
 - الإجابة يجب أن تكون واضحة وصحيحة
 - تجنب الأسئلة الغامضة أو المثيرة للجدل
 
@@ -156,30 +156,35 @@ export default async function handler(req, res) {
 
 ملاحظة: إذا كان نوع السؤال "open"، لا تضف حقل "options".`
 
-      const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 1024,
+      const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          messages: [
+            {
+              role: 'user',
+              content: prompt
             }
-          })
-        }
-      )
+          ]
+        })
+      })
 
-      if (!geminiResponse.ok) {
-        throw new Error(`Gemini API error: ${geminiResponse.status}`)
+      if (!claudeResponse.ok) {
+        const errorBody = await claudeResponse.text()
+        throw new Error(`Claude API error: ${claudeResponse.status} - ${errorBody}`)
       }
 
-      const geminiData = await geminiResponse.json()
-      const textContent = geminiData.candidates?.[0]?.content?.parts?.[0]?.text
+      const claudeData = await claudeResponse.json()
+      const textContent = claudeData.content?.[0]?.text
 
       if (!textContent) {
-        throw new Error('No text response from Gemini')
+        throw new Error('No text response from Claude')
       }
 
       const jsonMatch = textContent.match(/\{[\s\S]*\}/)
@@ -203,8 +208,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ questions })
 
     } catch (error) {
-      console.error('Gemini API failed, using fallback:', error.message)
-      // Include error details in fallback response for debugging
+      console.error('Claude API failed, using fallback:', error.message)
       const fallbackQs = getFallbackQuestions(categoryName, difficulty, count)
       const questions = fallbackQs.map(q => ({
         ...q,

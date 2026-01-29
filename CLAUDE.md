@@ -25,7 +25,7 @@ npm run preview      # Preview production build
 - Framer Motion (animations)
 - Supabase (database for categories/questions)
 - Vercel Serverless Functions (AI question generation)
-- Google Gemini API (via Vercel, with fallback questions)
+- Anthropic Claude API (via Vercel, with fallback questions)
 
 ## Architecture
 
@@ -47,7 +47,7 @@ home → team_setup → category_selection_A → category_selection_B → questi
 5. Power-ups modify gameplay (pit, call friend, double answer, rest)
 
 ### AI Question Generation
-- **Vercel Serverless Function:** `api/generate-questions.js` - calls Gemini API with Arabic fallback questions
+- **Vercel Serverless Function:** `api/generate-questions.js` - calls Anthropic Claude API with Arabic fallback questions
 - Frontend calls `/api/generate-questions` (no Supabase dependency for AI)
 - Falls back to pre-generated questions on API failure (429 rate limit, etc.)
 
@@ -88,7 +88,7 @@ VITE_SUPABASE_URL=https://xxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...
 
 # Vercel Environment Variables (via Vercel dashboard)
-GEMINI_API_KEY=your-gemini-api-key
+ANTHROPIC_API_KEY=your-anthropic-api-key
 ```
 
 ## Game Mechanics
@@ -137,4 +137,4 @@ CREATE TABLE questions (
 
 - Join Game UI exists but multiplayer sync not implemented
 - Sound files placeholder (add to `/public/sounds/`)
-- AI generation requires valid Gemini API key; falls back to pre-generated questions
+- AI generation requires valid Anthropic API key; falls back to pre-generated questions
