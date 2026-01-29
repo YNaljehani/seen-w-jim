@@ -10,36 +10,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'sp1',
-        questionText: 'كم عدد اللاعبين في فريق كرة القدم؟',
+        questionText: 'ما هي المدة الرسمية لمباراة كرة القدم؟',
         questionType: 'mcq',
-        correctAnswer: '11 لاعب',
-        options: ['9 لاعبين', '10 لاعبين', '11 لاعب', '12 لاعب'],
+        correctAnswer: '90 دقيقة',
+        options: ['60 دقيقة', '80 دقيقة', '90 دقيقة', '120 دقيقة'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'sp2',
-        questionText: 'من هو هداف كأس العالم 2022 في قطر؟',
+        questionText: 'أين أقيمت أول بطولة كأس عالم لكرة القدم عام 1930؟',
         questionType: 'mcq',
-        correctAnswer: 'كيليان مبابي',
-        options: ['كيليان مبابي', 'ليونيل ميسي', 'أوليفييه جيرو', 'جوليان ألفاريز'],
+        correctAnswer: 'الأوروغواي',
+        options: ['البرازيل', 'الأوروغواي', 'إيطاليا', 'فرنسا'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'sp3',
-        questionText: 'ما هو النادي الذي فاز بأكبر عدد من بطولات دوري أبطال أوروبا؟',
+        questionText: 'من هو اللاعب الوحيد الذي فاز بكأس العالم ثلاث مرات؟',
         questionType: 'mcq',
-        correctAnswer: 'ريال مدريد',
-        options: ['ريال مدريد', 'ميلان', 'ليفربول', 'بايرن ميونخ'],
+        correctAnswer: 'بيليه',
+        options: ['مارادونا', 'بيليه', 'رونالدو', 'زيدان'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'sp4',
-        questionText: 'في أي عام فاز المنتخب السعودي على الأرجنتين في كأس العالم؟',
+        questionText: 'كم يبلغ طول ملعب كرة السلة بالمتر حسب قوانين الاتحاد الدولي (FIBA)؟',
         questionType: 'open',
-        correctAnswer: '2022',
+        correctAnswer: '28',
         difficulty: 'expert',
         points: 500
       }
@@ -53,36 +53,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'mv1',
-        questionText: 'من هو بطل فيلم "تايتانيك"؟',
+        questionText: 'ما هو اسم السمكة في فيلم "البحث عن نيمو"؟',
         questionType: 'mcq',
-        correctAnswer: 'ليوناردو دي كابريو',
-        options: ['براد بيت', 'ليوناردو دي كابريو', 'توم كروز', 'جوني ديب'],
+        correctAnswer: 'نيمو',
+        options: ['دوري', 'نيمو', 'مارلن', 'جيل'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'mv2',
-        questionText: 'ما هو أول فيلم رسوم متحركة من ديزني؟',
+        questionText: 'من هو المخرج الذي أخرج فيلم "Inception" (استهلال)؟',
         questionType: 'mcq',
-        correctAnswer: 'سنو وايت والأقزام السبعة',
-        options: ['سنو وايت والأقزام السبعة', 'بينوكيو', 'فانتازيا', 'دمبو'],
+        correctAnswer: 'كريستوفر نولان',
+        options: ['ستيفن سبيلبرغ', 'كريستوفر نولان', 'جيمس كاميرون', 'ريدلي سكوت'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'mv3',
-        questionText: 'من هو مخرج فيلم "الأب الروحي"؟',
+        questionText: 'كم عدد أفلام سلسلة "هاري بوتر"؟',
         questionType: 'mcq',
-        correctAnswer: 'فرانسيس فورد كوبولا',
-        options: ['فرانسيس فورد كوبولا', 'مارتن سكورسيزي', 'ستيفن سبيلبرغ', 'كوينتن تارانتينو'],
+        correctAnswer: '8 أفلام',
+        options: ['6 أفلام', '7 أفلام', '8 أفلام', '9 أفلام'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'mv4',
-        questionText: 'ما هو الفيلم الأعلى إيرادات في تاريخ السينما؟',
+        questionText: 'في أي عام صدر أول فيلم ناطق في تاريخ السينما "مغني الجاز"؟',
         questionType: 'open',
-        correctAnswer: 'أفاتار',
+        correctAnswer: '1927',
         difficulty: 'expert',
         points: 500
       }
@@ -96,36 +96,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'geo1',
-        questionText: 'ما هي أكبر قارة في العالم؟',
+        questionText: 'ما هو أطول نهر في العالم؟',
         questionType: 'mcq',
-        correctAnswer: 'آسيا',
-        options: ['أفريقيا', 'آسيا', 'أوروبا', 'أمريكا الشمالية'],
+        correctAnswer: 'نهر النيل',
+        options: ['نهر الأمازون', 'نهر النيل', 'نهر المسيسيبي', 'نهر اليانغتسي'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'geo2',
-        questionText: 'ما هي عاصمة أستراليا؟',
+        questionText: 'ما هي أصغر دولة في العالم من حيث المساحة؟',
         questionType: 'mcq',
-        correctAnswer: 'كانبيرا',
-        options: ['سيدني', 'ملبورن', 'كانبيرا', 'بريزبن'],
+        correctAnswer: 'الفاتيكان',
+        options: ['موناكو', 'الفاتيكان', 'سان مارينو', 'ليختنشتاين'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'geo3',
-        questionText: 'ما هي أكبر دولة عربية من حيث المساحة؟',
+        questionText: 'ما هو البحر الذي يفصل بين قارتي أوروبا وأفريقيا؟',
         questionType: 'mcq',
-        correctAnswer: 'الجزائر',
-        options: ['السعودية', 'الجزائر', 'السودان', 'ليبيا'],
+        correctAnswer: 'البحر الأبيض المتوسط',
+        options: ['البحر الأحمر', 'البحر الأبيض المتوسط', 'بحر العرب', 'البحر الأسود'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'geo4',
-        questionText: 'كم عدد الدول العربية؟',
+        questionText: 'كم عدد قارات العالم؟',
         questionType: 'open',
-        correctAnswer: '22',
+        correctAnswer: '7',
         difficulty: 'expert',
         points: 500
       }
@@ -139,36 +139,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'is1',
-        questionText: 'كم عدد أركان الإسلام؟',
+        questionText: 'ما هو أول ركن من أركان الإسلام؟',
         questionType: 'mcq',
-        correctAnswer: '5 أركان',
-        options: ['4 أركان', '5 أركان', '6 أركان', '7 أركان'],
+        correctAnswer: 'الشهادتان',
+        options: ['الصلاة', 'الشهادتان', 'الصيام', 'الزكاة'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'is2',
-        questionText: 'ما هي أطول سورة في القرآن الكريم؟',
+        questionText: 'كم عدد سور القرآن الكريم؟',
         questionType: 'mcq',
-        correctAnswer: 'سورة البقرة',
-        options: ['سورة آل عمران', 'سورة البقرة', 'سورة النساء', 'سورة المائدة'],
+        correctAnswer: '114 سورة',
+        options: ['110 سورة', '112 سورة', '114 سورة', '116 سورة'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'is3',
-        questionText: 'كم عدد الأنبياء المذكورين في القرآن الكريم؟',
+        questionText: 'من هو أول مؤذن في الإسلام؟',
         questionType: 'mcq',
-        correctAnswer: '25 نبياً',
-        options: ['24 نبياً', '25 نبياً', '26 نبياً', '23 نبياً'],
+        correctAnswer: 'بلال بن رباح',
+        options: ['عبدالله بن مسعود', 'بلال بن رباح', 'عمار بن ياسر', 'سلمان الفارسي'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'is4',
-        questionText: 'كم مرة ذُكر اسم النبي محمد ﷺ في القرآن الكريم؟',
+        questionText: 'كم عدد أجزاء القرآن الكريم؟',
         questionType: 'open',
-        correctAnswer: '4',
+        correctAnswer: '30',
         difficulty: 'expert',
         points: 500
       }
@@ -182,36 +182,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'tech1',
-        questionText: 'ما هو اسم نظام تشغيل هواتف آيفون؟',
+        questionText: 'ما هو اسم محرك البحث الأشهر في العالم؟',
         questionType: 'mcq',
-        correctAnswer: 'iOS',
-        options: ['Android', 'iOS', 'Windows', 'Linux'],
+        correctAnswer: 'جوجل',
+        options: ['ياهو', 'جوجل', 'بينغ', 'بايدو'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'tech2',
-        questionText: 'من هو مؤسس شركة مايكروسوفت؟',
+        questionText: 'في أي عام تأسست شركة أبل؟',
         questionType: 'mcq',
-        correctAnswer: 'بيل غيتس',
-        options: ['ستيف جوبز', 'بيل غيتس', 'مارك زوكربيرغ', 'إيلون ماسك'],
+        correctAnswer: '1976',
+        options: ['1974', '1976', '1978', '1980'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'tech3',
-        questionText: 'في أي عام تم إطلاق أول آيفون؟',
+        questionText: 'ما هي لغة البرمجة التي طورها جيمس غوسلينغ عام 1995؟',
         questionType: 'mcq',
-        correctAnswer: '2007',
-        options: ['2005', '2006', '2007', '2008'],
+        correctAnswer: 'جافا',
+        options: ['بايثون', 'جافا', 'سي بلس بلس', 'روبي'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'tech4',
-        questionText: 'ما هو اسم أول موقع ويب في التاريخ؟',
+        questionText: 'ما هو اختصار "HTML"؟',
         questionType: 'open',
-        correctAnswer: 'info.cern.ch',
+        correctAnswer: 'HyperText Markup Language',
         difficulty: 'expert',
         points: 500
       }
@@ -225,7 +225,7 @@ export const defaultCategories = [
     questions: [
       {
         id: 'sa1',
-        questionText: 'ما هي عاصمة المملكة العربية السعودية؟',
+        questionText: 'ما هي أكبر مدينة في السعودية من حيث عدد السكان؟',
         questionType: 'mcq',
         correctAnswer: 'الرياض',
         options: ['جدة', 'الرياض', 'مكة المكرمة', 'الدمام'],
@@ -234,27 +234,27 @@ export const defaultCategories = [
       },
       {
         id: 'sa2',
-        questionText: 'في أي عام تم توحيد المملكة العربية السعودية؟',
+        questionText: 'ما اسم المؤسس الأول للدولة السعودية الأولى؟',
         questionType: 'mcq',
-        correctAnswer: '1932',
-        options: ['1930', '1932', '1934', '1928'],
+        correctAnswer: 'محمد بن سعود',
+        options: ['عبدالعزيز بن محمد', 'محمد بن سعود', 'تركي بن عبدالله', 'فيصل بن تركي'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'sa3',
-        questionText: 'كم عدد مناطق المملكة العربية السعودية الإدارية؟',
+        questionText: 'في أي عام أقيمت أول بطولة دوري كرة القدم السعودي؟',
         questionType: 'mcq',
-        correctAnswer: '13 منطقة',
-        options: ['11 منطقة', '12 منطقة', '13 منطقة', '14 منطقة'],
+        correctAnswer: '1976',
+        options: ['1972', '1974', '1976', '1978'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'sa4',
-        questionText: 'كم يبلغ طول مشروع "ذا لاين" بالكيلومترات؟',
+        questionText: 'كم يبلغ ارتفاع برج الساعة في مكة المكرمة بالمتر تقريباً؟',
         questionType: 'open',
-        correctAnswer: '170',
+        correctAnswer: '601',
         difficulty: 'expert',
         points: 500
       }
@@ -268,36 +268,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'kw1',
-        questionText: 'ما هو اسم عملة الكويت؟',
+        questionText: 'ما هو اسم أشهر أبراج الكويت الثلاثة؟',
         questionType: 'mcq',
-        correctAnswer: 'الدينار الكويتي',
-        options: ['الريال', 'الدينار الكويتي', 'الدرهم', 'الجنيه'],
+        correctAnswer: 'أبراج الكويت',
+        options: ['أبراج الحمراء', 'أبراج الكويت', 'برج التحرير', 'أبراج الشعب'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'kw2',
-        questionText: 'في أي عام استقلت الكويت؟',
+        questionText: 'ما هو اسم البرلمان الكويتي؟',
         questionType: 'mcq',
-        correctAnswer: '1961',
-        options: ['1959', '1961', '1963', '1965'],
+        correctAnswer: 'مجلس الأمة',
+        options: ['مجلس الشورى', 'مجلس الأمة', 'مجلس النواب', 'المجلس الوطني'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'kw3',
-        questionText: 'كم عدد محافظات الكويت؟',
+        questionText: 'في أي عام تم تحرير الكويت من الغزو العراقي؟',
         questionType: 'mcq',
-        correctAnswer: '6 محافظات',
-        options: ['5 محافظات', '6 محافظات', '7 محافظات', '4 محافظات'],
+        correctAnswer: '1991',
+        options: ['1990', '1991', '1992', '1993'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'kw4',
-        questionText: 'ما هو الاسم القديم للكويت؟',
+        questionText: 'كم عدد أعضاء مجلس الأمة الكويتي المنتخبين؟',
         questionType: 'open',
-        correctAnswer: 'القرين',
+        correctAnswer: '50',
         difficulty: 'expert',
         points: 500
       }
@@ -311,36 +311,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'mu1',
-        questionText: 'من هو ملقب بـ "كوكب الشرق"؟',
+        questionText: 'من هي المغنية اللبنانية الملقبة بـ "جارة القمر"؟',
         questionType: 'mcq',
-        correctAnswer: 'أم كلثوم',
-        options: ['فيروز', 'أم كلثوم', 'وردة الجزائرية', 'صباح'],
+        correctAnswer: 'فيروز',
+        options: ['نجوى كرم', 'فيروز', 'ماجدة الرومي', 'صباح'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'mu2',
-        questionText: 'من هو الفنان السعودي الملقب بـ "فنان العرب"؟',
+        questionText: 'من هو الملحن الذي لُقب بـ "موسيقار الأجيال"؟',
         questionType: 'mcq',
-        correctAnswer: 'محمد عبده',
-        options: ['طلال مداح', 'محمد عبده', 'عبدالمجيد عبدالله', 'راشد الماجد'],
+        correctAnswer: 'محمد عبدالوهاب',
+        options: ['رياض السنباطي', 'محمد عبدالوهاب', 'بليغ حمدي', 'فريد الأطرش'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'mu3',
-        questionText: 'من هو مؤلف السيمفونية التاسعة الشهيرة؟',
+        questionText: 'من هو الرسام الذي رسم لوحة "الموناليزا"؟',
         questionType: 'mcq',
-        correctAnswer: 'بيتهوفن',
-        options: ['موزارت', 'باخ', 'بيتهوفن', 'شوبان'],
+        correctAnswer: 'ليوناردو دافنشي',
+        options: ['مايكل أنجلو', 'ليوناردو دافنشي', 'رافائيل', 'بوتيتشيلي'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'mu4',
-        questionText: 'كم عدد السيمفونيات التي ألفها بيتهوفن؟',
+        questionText: 'كم عدد أوتار آلة العود التقليدية (أوتار مزدوجة)؟',
         questionType: 'open',
-        correctAnswer: '9',
+        correctAnswer: '11',
         difficulty: 'expert',
         points: 500
       }
@@ -354,36 +354,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'hi1',
-        questionText: 'من هو أول رئيس للولايات المتحدة الأمريكية؟',
+        questionText: 'في أي مدينة وُلد النبي محمد ﷺ؟',
         questionType: 'mcq',
-        correctAnswer: 'جورج واشنطن',
-        options: ['أبراهام لينكولن', 'جورج واشنطن', 'توماس جيفرسون', 'جون آدمز'],
+        correctAnswer: 'مكة المكرمة',
+        options: ['المدينة المنورة', 'مكة المكرمة', 'الطائف', 'جدة'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'hi2',
-        questionText: 'من هو القائد المسلم الذي فتح القسطنطينية؟',
+        questionText: 'ما هي الحضارة التي بنت الأهرامات في مصر؟',
         questionType: 'mcq',
-        correctAnswer: 'محمد الفاتح',
-        options: ['صلاح الدين', 'محمد الفاتح', 'طارق بن زياد', 'خالد بن الوليد'],
+        correctAnswer: 'الحضارة الفرعونية',
+        options: ['الحضارة الرومانية', 'الحضارة الفرعونية', 'الحضارة اليونانية', 'الحضارة الفارسية'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'hi3',
-        questionText: 'متى وقعت الحرب العالمية الأولى؟',
+        questionText: 'من هو القائد المسلم الذي فتح بلاد الأندلس عام 711م؟',
         questionType: 'mcq',
-        correctAnswer: '1914-1918',
-        options: ['1912-1916', '1914-1918', '1916-1920', '1910-1914'],
+        correctAnswer: 'طارق بن زياد',
+        options: ['خالد بن الوليد', 'طارق بن زياد', 'موسى بن نصير', 'عقبة بن نافع'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'hi4',
-        questionText: 'في أي عام سقطت الأندلس (غرناطة)؟',
+        questionText: 'في أي عام هجري وقعت غزوة بدر الكبرى؟',
         questionType: 'open',
-        correctAnswer: '1492',
+        correctAnswer: '2',
         difficulty: 'expert',
         points: 500
       }
@@ -397,36 +397,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'fo1',
-        questionText: 'من أي بلد نشأت البيتزا؟',
+        questionText: 'ما هو المكون الرئيسي في طبق الحمص؟',
         questionType: 'mcq',
-        correctAnswer: 'إيطاليا',
-        options: ['أمريكا', 'إيطاليا', 'فرنسا', 'اليونان'],
+        correctAnswer: 'الحمص (الحبوب)',
+        options: ['الفول', 'الحمص (الحبوب)', 'العدس', 'الفاصوليا'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'fo2',
-        questionText: 'ما هي الأكلة الوطنية في السعودية؟',
+        questionText: 'من أي بلد نشأ طبق "السوشي" الأصلي؟',
         questionType: 'mcq',
-        correctAnswer: 'الكبسة',
-        options: ['المندي', 'الكبسة', 'المظبي', 'الجريش'],
+        correctAnswer: 'اليابان',
+        options: ['الصين', 'اليابان', 'كوريا', 'تايلاند'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'fo3',
-        questionText: 'ما هو اسم الطبق الياباني المكون من الأرز والسمك النيء؟',
+        questionText: 'ما هو المشروب الذي يُصنع من تخمير أوراق شجرة "كاميليا سينينسيس"؟',
         questionType: 'mcq',
-        correctAnswer: 'سوشي',
-        options: ['رامن', 'سوشي', 'تيمبورا', 'أودون'],
+        correctAnswer: 'الشاي',
+        options: ['القهوة', 'الشاي', 'الكاكاو', 'المتة'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'fo4',
-        questionText: 'ما هي التوابل الأكثر تكلفة في العالم؟',
+        questionText: 'ما هو الاسم العلمي لفاكهة الموز؟',
         questionType: 'open',
-        correctAnswer: 'الزعفران',
+        correctAnswer: 'موسى',
         difficulty: 'expert',
         points: 500
       }
@@ -440,36 +440,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'sc1',
-        questionText: 'ما هو الرمز الكيميائي للماء؟',
+        questionText: 'ما هو الغاز الذي يتنفسه الإنسان؟',
         questionType: 'mcq',
-        correctAnswer: 'H2O',
-        options: ['CO2', 'H2O', 'O2', 'NaCl'],
+        correctAnswer: 'الأكسجين',
+        options: ['النيتروجين', 'الأكسجين', 'ثاني أكسيد الكربون', 'الهيدروجين'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'sc2',
-        questionText: 'ما هو أكبر كوكب في المجموعة الشمسية؟',
+        questionText: 'ما هو العنصر الأكثر وفرة في القشرة الأرضية؟',
         questionType: 'mcq',
-        correctAnswer: 'المشتري',
-        options: ['زحل', 'المشتري', 'أورانوس', 'نبتون'],
+        correctAnswer: 'الأكسجين',
+        options: ['الحديد', 'الأكسجين', 'السيليكون', 'الألمنيوم'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'sc3',
-        questionText: 'كم عدد عظام جسم الإنسان البالغ؟',
+        questionText: 'من هو العالم الذي وضع قوانين الحركة الثلاثة؟',
         questionType: 'mcq',
-        correctAnswer: '206 عظمة',
-        options: ['196 عظمة', '206 عظمة', '216 عظمة', '186 عظمة'],
+        correctAnswer: 'إسحاق نيوتن',
+        options: ['ألبرت أينشتاين', 'إسحاق نيوتن', 'غاليليو غاليلي', 'نيكولا تسلا'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'sc4',
-        questionText: 'كم يبلغ عدد الكروموسومات في الخلية البشرية؟',
+        questionText: 'كم تبلغ سرعة الضوء بالكيلومتر في الثانية تقريباً؟',
         questionType: 'open',
-        correctAnswer: '46',
+        correctAnswer: '300000',
         difficulty: 'expert',
         points: 500
       }
@@ -483,36 +483,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'ga1',
-        questionText: 'من هي الشركة المصنعة لجهاز بلايستيشن؟',
+        questionText: 'ما اسم الشخصية ذات الشارب في لعبة "سوبر ماريو"؟',
         questionType: 'mcq',
-        correctAnswer: 'سوني',
-        options: ['مايكروسوفت', 'نينتندو', 'سوني', 'سيجا'],
+        correctAnswer: 'ماريو',
+        options: ['لويجي', 'ماريو', 'وايريو', 'تود'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'ga2',
-        questionText: 'ما اسم لعبة البقاء الشهيرة التي تحتوي على "كريبر"؟',
+        questionText: 'ما هي لعبة الباتل رويال التي أصدرتها Epic Games عام 2017؟',
         questionType: 'mcq',
-        correctAnswer: 'ماينكرافت',
-        options: ['فورتنايت', 'ماينكرافت', 'روبلوكس', 'تيراريا'],
+        correctAnswer: 'فورتنايت',
+        options: ['ببجي', 'فورتنايت', 'أيبكس ليجندز', 'كول أوف ديوتي وارزون'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'ga3',
-        questionText: 'في أي عام صدرت لعبة GTA V؟',
+        questionText: 'من هي الشركة المطورة للعبة "إلدن رينغ"؟',
         questionType: 'mcq',
-        correctAnswer: '2013',
-        options: ['2011', '2012', '2013', '2014'],
+        correctAnswer: 'فروم سوفتوير',
+        options: ['نينتندو', 'فروم سوفتوير', 'روكستار', 'يوبيسوفت'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'ga4',
-        questionText: 'ما هو اسم بطل لعبة "ذا ويتشر"؟',
+        questionText: 'ما هو اسم المنطقة المفتوحة في لعبة "زيلدا: نفَس البرية"؟',
         questionType: 'open',
-        correctAnswer: 'جيرالت',
+        correctAnswer: 'هايرول',
         difficulty: 'expert',
         points: 500
       }
@@ -526,36 +526,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'an1',
-        questionText: 'ما هو أسرع حيوان في العالم؟',
+        questionText: 'ما هو أطول حيوان بري في العالم؟',
         questionType: 'mcq',
-        correctAnswer: 'الفهد',
-        options: ['الأسد', 'الفهد', 'النمر', 'الحصان'],
+        correctAnswer: 'الزرافة',
+        options: ['الفيل', 'الزرافة', 'الجمل', 'النعامة'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'an2',
-        questionText: 'ما هو أكبر حيوان على وجه الأرض؟',
+        questionText: 'ما هو الحيوان الوحيد الذي لا يستطيع القفز؟',
         questionType: 'mcq',
-        correctAnswer: 'الحوت الأزرق',
-        options: ['الفيل', 'الحوت الأزرق', 'الزرافة', 'وحيد القرن'],
+        correctAnswer: 'الفيل',
+        options: ['فرس النهر', 'الفيل', 'وحيد القرن', 'الخنزير'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'an3',
-        questionText: 'كم قلب للأخطبوط؟',
+        questionText: 'ما هو الطائر الوحيد الذي يستطيع الطيران للخلف؟',
         questionType: 'mcq',
-        correctAnswer: '3 قلوب',
-        options: ['قلب واحد', 'قلبان', '3 قلوب', '4 قلوب'],
+        correctAnswer: 'الطائر الطنان',
+        options: ['النسر', 'الطائر الطنان', 'البطريق', 'الصقر'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'an4',
-        questionText: 'كم سنة يمكن أن يعيش السلحفاة البحرية؟',
+        questionText: 'كم عدد أرجل العنكبوت؟',
         questionType: 'open',
-        correctAnswer: '150',
+        correctAnswer: '8',
         difficulty: 'expert',
         points: 500
       }
@@ -569,36 +569,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'ar1',
-        questionText: 'كم عدد حروف اللغة العربية؟',
+        questionText: 'ما هو أول حرف في الأبجدية العربية؟',
         questionType: 'mcq',
-        correctAnswer: '28 حرفاً',
-        options: ['26 حرفاً', '28 حرفاً', '30 حرفاً', '32 حرفاً'],
+        correctAnswer: 'الألف',
+        options: ['الباء', 'الألف', 'الهمزة', 'التاء'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'ar2',
-        questionText: 'ما هو جمع كلمة "كتاب"؟',
+        questionText: 'ما هو مرادف كلمة "شجاع" في اللغة العربية؟',
         questionType: 'mcq',
-        correctAnswer: 'كتب',
-        options: ['كتابات', 'كتب', 'كتابين', 'مكاتب'],
+        correctAnswer: 'مقدام',
+        options: ['حكيم', 'مقدام', 'صبور', 'كريم'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'ar3',
-        questionText: 'من هو مؤلف كتاب "ألف ليلة وليلة"؟',
+        questionText: 'من هو الشاعر الذي لُقب بـ "أمير الشعراء"؟',
         questionType: 'mcq',
-        correctAnswer: 'غير معروف',
-        options: ['ابن المقفع', 'الجاحظ', 'غير معروف', 'المتنبي'],
+        correctAnswer: 'أحمد شوقي',
+        options: ['المتنبي', 'أحمد شوقي', 'حافظ إبراهيم', 'نزار قباني'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'ar4',
-        questionText: 'ما هو أطول كلمة في اللغة العربية؟',
+        questionText: 'ما هو جمع كلمة "مريض" جمع مذكر سالم؟',
         questionType: 'open',
-        correctAnswer: 'فأسقيناكموه',
+        correctAnswer: 'مريضون',
         difficulty: 'expert',
         points: 500
       }
@@ -612,36 +612,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'spc1',
-        questionText: 'ما هو أقرب كوكب للشمس؟',
+        questionText: 'ما هو الكوكب الملقب بـ "الكوكب الأحمر"؟',
         questionType: 'mcq',
-        correctAnswer: 'عطارد',
-        options: ['الزهرة', 'عطارد', 'المريخ', 'الأرض'],
+        correctAnswer: 'المريخ',
+        options: ['المشتري', 'المريخ', 'زحل', 'الزهرة'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'spc2',
-        questionText: 'من هو أول رائد فضاء عربي؟',
+        questionText: 'ما اسم المجرة التي يقع فيها كوكب الأرض؟',
         questionType: 'mcq',
-        correctAnswer: 'الأمير سلطان بن سلمان',
-        options: ['هزاع المنصوري', 'الأمير سلطان بن سلمان', 'محمد فارس', 'سلطان النيادي'],
+        correctAnswer: 'درب التبانة',
+        options: ['المرأة المسلسلة', 'درب التبانة', 'سحابة ماجلان', 'مجرة المثلث'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'spc3',
-        questionText: 'كم يبلغ عدد أقمار كوكب المشتري تقريباً؟',
+        questionText: 'من هو أول إنسان سافر إلى الفضاء؟',
         questionType: 'mcq',
-        correctAnswer: '95 قمراً',
-        options: ['16 قمراً', '53 قمراً', '79 قمراً', '95 قمراً'],
+        correctAnswer: 'يوري غاغارين',
+        options: ['نيل أرمسترونغ', 'يوري غاغارين', 'بز ألدرين', 'جون غلين'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'spc4',
-        questionText: 'في أي سنة هبط أول إنسان على سطح القمر؟',
+        questionText: 'كم كوكباً في المجموعة الشمسية بعد تصنيف بلوتو ككوكب قزم؟',
         questionType: 'open',
-        correctAnswer: '1969',
+        correctAnswer: '8',
         difficulty: 'expert',
         points: 500
       }
@@ -655,36 +655,36 @@ export const defaultCategories = [
     questions: [
       {
         id: 'uae1',
-        questionText: 'كم عدد الإمارات في دولة الإمارات؟',
+        questionText: 'ما هي عاصمة دولة الإمارات العربية المتحدة؟',
         questionType: 'mcq',
-        correctAnswer: '7 إمارات',
-        options: ['5 إمارات', '6 إمارات', '7 إمارات', '8 إمارات'],
+        correctAnswer: 'أبوظبي',
+        options: ['دبي', 'أبوظبي', 'الشارقة', 'عجمان'],
         difficulty: 'easy',
         points: 100
       },
       {
         id: 'uae2',
-        questionText: 'من هو مؤسس دولة الإمارات العربية المتحدة؟',
+        questionText: 'ما هو اسم مسبار الفضاء الإماراتي الذي وصل المريخ عام 2021؟',
         questionType: 'mcq',
-        correctAnswer: 'الشيخ زايد بن سلطان',
-        options: ['الشيخ راشد بن سعيد', 'الشيخ زايد بن سلطان', 'الشيخ خليفة بن زايد', 'الشيخ محمد بن راشد'],
+        correctAnswer: 'مسبار الأمل',
+        options: ['مسبار النور', 'مسبار الأمل', 'مسبار زايد', 'مسبار الاتحاد'],
         difficulty: 'medium',
         points: 200
       },
       {
         id: 'uae3',
-        questionText: 'ما هو أعلى مبنى في العالم الموجود في دبي؟',
+        questionText: 'ما هي أكبر إمارة في دولة الإمارات من حيث المساحة؟',
         questionType: 'mcq',
-        correctAnswer: 'برج خليفة',
-        options: ['برج العرب', 'برج خليفة', 'برج الإمارات', 'برج المملكة'],
+        correctAnswer: 'أبوظبي',
+        options: ['دبي', 'أبوظبي', 'الشارقة', 'رأس الخيمة'],
         difficulty: 'hard',
         points: 300
       },
       {
         id: 'uae4',
-        questionText: 'في أي سنة تأسست دولة الإمارات العربية المتحدة؟',
+        questionText: 'كم يبلغ ارتفاع برج خليفة بالمتر تقريباً؟',
         questionType: 'open',
-        correctAnswer: '1971',
+        correctAnswer: '828',
         difficulty: 'expert',
         points: 500
       }

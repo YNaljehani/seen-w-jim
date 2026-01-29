@@ -23,8 +23,9 @@ npm run preview      # Preview production build
 - Tailwind CSS (RTL enabled)
 - Zustand (state management with persist)
 - Framer Motion (animations)
-- Supabase (database + Edge Functions)
-- Google Gemini API (AI question generation)
+- Supabase (database for categories/questions)
+- Vercel Serverless Functions (AI question generation)
+- Google Gemini API (via Vercel, with fallback questions)
 
 ## Architecture
 
@@ -45,10 +46,19 @@ home → team_setup → category_selection_A → category_selection_B → questi
 4. Timer runs, team answers, steal mode if wrong
 5. Power-ups modify gameplay (pit, call friend, double answer, rest)
 
+### AI Question Generation
+- **Vercel Serverless Function:** `api/generate-questions.js` - calls Gemini API with Arabic fallback questions
+- Frontend calls `/api/generate-questions` (no Supabase dependency for AI)
+- Falls back to pre-generated questions on API failure (429 rate limit, etc.)
+
 ### Supabase Integration
-- **Database:** categories + questions tables
-- **Edge Function:** `supabase/functions/generate-questions/` - Gemini AI generation with fallback questions
+- **Database:** categories + questions tables (optional - game works without it)
+- Supabase data merges with `defaultQuestions.js` in `loadCategories()`
 - **Service Layer:** `src/services/questionService.js` - CRUD operations
+
+### Turn Alternation
+- `pickingTeam` state tracks which team originally picked (survives steal mode swaps)
+- Teams always alternate picking, regardless of correct/wrong answers
 
 ## Important Patterns
 
@@ -77,7 +87,7 @@ Components like Home.jsx detect mobile via `window.innerWidth < 768` and render 
 VITE_SUPABASE_URL=https://xxxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...
 
-# Supabase Edge Function Secrets (via dashboard)
+# Vercel Environment Variables (via Vercel dashboard)
 GEMINI_API_KEY=your-gemini-api-key
 ```
 
