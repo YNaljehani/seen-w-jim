@@ -23,7 +23,8 @@ export default function QuestionBoard({ onSelectQuestion }) {
     answeredQuestions,
     currentTeam,
     teamA,
-    teamB
+    teamB,
+    gameQuestions
   } = useGameStore()
   const { isDark } = useThemeStore()
   const { playClick } = useSoundEffect()
@@ -44,18 +45,23 @@ export default function QuestionBoard({ onSelectQuestion }) {
   }
 
   const getQuestionForCell = (categoryId, points) => {
+    // Use pre-randomized game questions first
+    const key = `${categoryId}-${points}`
+    if (gameQuestions && gameQuestions[key]) {
+      return gameQuestions[key]
+    }
+
+    // Fallback for older game state
     const category = availableCategories.find(c => c.id === categoryId)
     if (!category || !category.questions || category.questions.length === 0) return null
 
-    // First try exact match by points
     const exactMatch = category.questions.find(q => q.points === points)
     if (exactMatch) return exactMatch
 
-    // Fallback: map questions to rows by index (sorted by points)
     const pointIndex = POINT_VALUES.indexOf(points)
     const sorted = [...category.questions].sort((a, b) => (a.points || 0) - (b.points || 0))
     if (pointIndex < sorted.length) {
-      return { ...sorted[pointIndex], points } // Assign the expected points for grid consistency
+      return { ...sorted[pointIndex], points }
     }
 
     return null

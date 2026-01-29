@@ -39,6 +39,9 @@ export const useGameStore = create((set, get) => ({
   answeredQuestions: [],
   pickingTeam: 'A', // Tracks which team originally picked the question (for alternation)
 
+  // Randomized questions for current game (maps "categoryId-points" to a question)
+  gameQuestions: {},
+
   // Loading state
   isLoading: false,
   loadError: null,
@@ -129,6 +132,31 @@ export const useGameStore = create((set, get) => ({
   },
 
   startGame: () => {
+    // Randomize: pick one question per (category, points) from the pool
+    const { selectedCategories, availableCategories } = get()
+    const pointValues = [100, 200, 300, 500]
+    const gameQuestions = {}
+
+    selectedCategories.forEach(catId => {
+      const category = availableCategories.find(c => c.id === catId)
+      if (!category || !category.questions) return
+
+      pointValues.forEach(points => {
+        const matching = category.questions.filter(q => q.points === points)
+        if (matching.length > 0) {
+          const randomIndex = Math.floor(Math.random() * matching.length)
+          gameQuestions[`${catId}-${points}`] = matching[randomIndex]
+        } else {
+          // Fallback: use index-based mapping
+          const sorted = [...category.questions].sort((a, b) => (a.points || 0) - (b.points || 0))
+          const idx = pointValues.indexOf(points)
+          if (idx < sorted.length) {
+            gameQuestions[`${catId}-${points}`] = { ...sorted[idx], points }
+          }
+        }
+      })
+    })
+
     set({
       gameState: 'question_board',
       currentQuestion: null,
@@ -136,7 +164,8 @@ export const useGameStore = create((set, get) => ({
       currentTeam: 'A',
       isStealMode: false,
       timerSeconds: get().settings.timerA,
-      isTimerRunning: false
+      isTimerRunning: false,
+      gameQuestions
     })
   },
 
@@ -498,6 +527,7 @@ export const useGameStore = create((set, get) => ({
       timerPaused: false,
       activePowerUp: null,
       showCallOverlay: false,
+      gameQuestions: {},
       // Stats are reset via initialTeam
     })
   },
@@ -518,7 +548,8 @@ export const useGameStore = create((set, get) => ({
       isTimerRunning: false,
       timerPaused: false,
       activePowerUp: null,
-      showCallOverlay: false
+      showCallOverlay: false,
+      gameQuestions: {}
     })
   }
 }))
